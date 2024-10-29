@@ -1,13 +1,13 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # Dependencies
-/node_modules
-/.pnp
+node_modules/
+.pnp/
 .pnp.*
 
 # Package managers
-.npm
-.yarn/*
+.npm/
+.yarn/
 !.yarn/patches
 !.yarn/plugins
 !.yarn/releases
@@ -15,34 +15,45 @@
 !.yarn/versions
 .pnpm-store/
 
+# Cache directories
+node_cache/
+.cache/
+.mf/
+.rollup.cache/
+.temp/
+.tmp/
+.docusaurus/
+
 # Testing
-/coverage
-/.nyc_output
-/cypress/videos/
-/cypress/screenshots/
+coverage/
+.nyc_output/
+cypress/videos/
+cypress/screenshots/
+__tests__/coverage/
+*.lcov
 
 # Next.js
-/.next/
-/out/
 .next/
+out/
+build/
+dist/
 next-env.d.ts
-
-# Production
-/build
-/dist
 
 # Environment files
 .env
 .env.*
 !.env.example
+.env.local
+.env.*.local
 
 # Debug & Logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
-logs
+logs/
 *.log
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
 # IDE & Editors
 .idea/
@@ -59,6 +70,9 @@ logs
 .settings/
 .classpath
 .factorypath
+.vs/
+*.code-workspace
+.history/
 
 # OS generated
 .DS_Store
@@ -68,62 +82,64 @@ logs
 .Trashes
 ehthumbs.db
 Thumbs.db
+Desktop.ini
 
 # TypeScript
 *.tsbuildinfo
+tsconfig.tsbuildinfo
 
 # Temporary files
 *.tmp
 *.temp
-.cache/
+tmp/
+temp/
 
 # Build output
 .vercel
 .netlify
-
-# Test coverage
-coverage/
-.nyc_output/
-
-# Storybook
-storybook-static/
-
-# PWA
-**/public/sw.js
-**/public/workbox-*.js
-**/public/worker-*.js
-**/public/sw.js.map
-**/public/workbox-*.js.map
-**/public/worker-*.js.map
+public/sw.js
+public/workbox-*.js
+public/worker-*.js
+public/*.map
 
 # Project specific
 # Uploaded files
-/uploads
-/temp-uploads
+uploads/
+temp-uploads/
+public/uploads/
+public/temp/
 
 # Generated files
-/public/previews
-/public/exports
-
-# Local development
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+public/previews/
+public/exports/
+public/assets/generated/
 
 # Database
 *.sqlite
 *.sqlite3
 *.db
+*.db-journal
 
 # Backup files
 *.bak
 *.backup
 *~
+*.old
+*.orig
+*.rej
 
-# Font files (except example fonts)
-/public/fonts/*
-!/public/fonts/example.*
+# Font files
+public/fonts/*
+!public/fonts/example.*
 
-# Node cache
-node_cache/
+# Local development
+*.local
+local.*
+*.dev.*
+dev.*
+
+# Test files
+test.md
+*.test.md
+examples/*.md
+!examples/README.md

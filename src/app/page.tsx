@@ -1,8 +1,9 @@
 'use client';
 
-import { Box, Container, Heading, Text, VStack } from "@chakra-ui/react";
+import { Box, Container, Heading, Text, VStack, Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react";
 import Layout from "@/components/layout/Layout";
 import FileUpload from "@/components/upload/FileUpload";
+import FileList from "@/components/file/FileList";
 
 export default function Home() {
   return (
@@ -17,7 +18,21 @@ export default function Home() {
               {process.env.NEXT_PUBLIC_APP_DESCRIPTION}
             </Text>
           </Box>
-          <FileUpload />
+          
+          <Tabs variant="enclosed">
+            <TabList>
+              <Tab>上传文件</Tab>
+              <Tab>文件列表</Tab>
+            </TabList>
+            <TabPanels>
+              <TabPanel p={0} pt={4}>
+                <FileUpload />
+              </TabPanel>
+              <TabPanel p={0} pt={4}>
+                <FileList />
+              </TabPanel>
+            </TabPanels>
+          </Tabs>
         </VStack>
       </Container>
     </Layout>
