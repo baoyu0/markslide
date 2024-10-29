@@ -19,7 +19,8 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "marked": ["./node_modules/marked"]
     },
     "typeRoots": ["./node_modules/@types", "./src/types"]
   },

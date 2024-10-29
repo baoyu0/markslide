@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import {
   Box,
   Table,
@@ -14,151 +13,123 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
-  useColorModeValue,
   Text,
+  Tooltip,
 } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faEllipsisVertical,
   faEye,
-  faDownload,
-  faPen,
   faTrash,
+  faEdit,
+  faDownload,
+  faFileAlt,
+  faCode,
+  faDesktop,
+  faEllipsisV,
 } from "@fortawesome/free-solid-svg-icons";
-
-interface FileItem {
-  id: string;
-  name: string;
-  type: "markdown" | "html" | "ppt";
-  size: number;
-  lastModified: Date;
-  path: string;
-}
-
-const DEMO_FILES: FileItem[] = [
-  {
-    id: "1",
-    name: "Markdown 示例",
-    type: "markdown",
-    size: 2048,
-    lastModified: new Date("2024-03-19"),
-    path: "/examples/markdown/demo.md",
-  },
-  {
-    id: "2",
-    name: "HTML 示例",
-    type: "html",
-    size: 4096,
-    lastModified: new Date("2024-03-19"),
-    path: "/examples/html/demo.html",
-  },
-  {
-    id: "3",
-    name: "PPT 示例",
-    type: "ppt",
-    size: 8192,
-    lastModified: new Date("2024-03-19"),
-    path: "/examples/ppt/demo.html",
-  },
-];
+import { useFileStore } from "@/store/useFileStore";
+import { usePreviewStore } from "@/store/usePreviewStore";
+import { formatFileSize, formatDate } from "@/utils/format";
 
 export default function FileList() {
-  const [files] = useState<FileItem[]>(DEMO_FILES);
-  const bgColor = useColorModeValue("white", "gray.800");
-  const borderColor = useColorModeValue("gray.200", "gray.700");
+  const files = useFileStore((state) => state.files);
+  const removeFile = useFileStore((state) => state.removeFile);
+  const { setCurrentFile, setPreviewType } = usePreviewStore();
 
-  const formatFileSize = (bytes: number) => {
-    if (bytes < 1024) return bytes + " B";
-    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
-    return (bytes / (1024 * 1024)).toFixed(1) + " MB";
+  const handlePreview = (fileId: string, type: "markdown" | "html" | "ppt") => {
+    setCurrentFile(fileId);
+    setPreviewType(type);
+    window.open(`/preview?fileId=${fileId}&type=${type}`, "_blank");
   };
 
-  const formatDate = (date: Date) => {
-    return date.toLocaleDateString("zh-CN", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    });
-  };
-
-  const handlePreview = (file: FileItem) => {
-    const previewUrl = `/preview?path=${encodeURIComponent(file.path)}&type=${file.type}`;
-    window.open(previewUrl, "_blank");
-  };
-
-  const handleDownload = (file: FileItem) => {
-    // TODO: 实现下载功能
-    console.log("Download:", file);
-  };
-
-  const handleEdit = (file: FileItem) => {
-    // TODO: 实现编辑功能
-    console.log("Edit:", file);
-  };
-
-  const handleDelete = (file: FileItem) => {
-    // TODO: 实现删除功能
-    console.log("Delete:", file);
-  };
+  if (files.length === 0) {
+    return (
+      <Box textAlign="center" py={8}>
+        <Text color="gray.500">暂无文件</Text>
+      </Box>
+    );
+  }
 
   return (
-    <Box
-      bg={bgColor}
-      borderRadius="lg"
-      border="1px"
-      borderColor={borderColor}
-      overflow="hidden"
-    >
+    <Box overflowX="auto">
       <Table variant="simple">
         <Thead>
           <Tr>
             <Th>文件名</Th>
-            <Th>类型</Th>
             <Th>大小</Th>
-            <Th>修改时间</Th>
+            <Th>上传时间</Th>
+            <Th>预览</Th>
             <Th>操作</Th>
           </Tr>
         </Thead>
         <Tbody>
           {files.map((file) => (
             <Tr key={file.id}>
-              <Td>
-                <Text fontWeight="medium">{file.name}</Text>
-              </Td>
-              <Td>{file.type.toUpperCase()}</Td>
+              <Td>{file.name}</Td>
               <Td>{formatFileSize(file.size)}</Td>
-              <Td>{formatDate(file.lastModified)}</Td>
+              <Td>{formatDate(file.createdAt)}</Td>
               <Td>
                 <Menu>
-                  <MenuButton
-                    as={IconButton}
-                    aria-label="Options"
-                    icon={<FontAwesomeIcon icon={faEllipsisVertical} />}
-                    variant="ghost"
-                    size="sm"
-                  />
+                  <Tooltip label="选择预览模式">
+                    <MenuButton
+                      as={IconButton}
+                      icon={<FontAwesomeIcon icon={faEye} />}
+                      variant="ghost"
+                      size="sm"
+                    />
+                  </Tooltip>
                   <MenuList>
                     <MenuItem
-                      icon={<FontAwesomeIcon icon={faEye} />}
-                      onClick={() => handlePreview(file)}
+                      icon={<FontAwesomeIcon icon={faFileAlt} />}
+                      onClick={() => handlePreview(file.id, "markdown")}
                     >
-                      预览
+                      Markdown 预览
                     </MenuItem>
                     <MenuItem
-                      icon={<FontAwesomeIcon icon={faDownload} />}
-                      onClick={() => handleDownload(file)}
+                      icon={<FontAwesomeIcon icon={faCode} />}
+                      onClick={() => handlePreview(file.id, "html")}
                     >
-                      下载
+                      HTML 预览
                     </MenuItem>
                     <MenuItem
-                      icon={<FontAwesomeIcon icon={faPen} />}
-                      onClick={() => handleEdit(file)}
+                      icon={<FontAwesomeIcon icon={faDesktop} />}
+                      onClick={() => handlePreview(file.id, "ppt")}
+                    >
+                      PPT 预览
+                    </MenuItem>
+                  </MenuList>
+                </Menu>
+              </Td>
+              <Td>
+                <Menu>
+                  <Tooltip label="更多操作">
+                    <MenuButton
+                      as={IconButton}
+                      icon={<FontAwesomeIcon icon={faEllipsisV} />}
+                      variant="ghost"
+                      size="sm"
+                    />
+                  </Tooltip>
+                  <MenuList>
+                    <MenuItem
+                      icon={<FontAwesomeIcon icon={faEdit} />}
+                      onClick={() => {
+                        /* 实现编辑功能 */
+                      }}
                     >
                       编辑
                     </MenuItem>
                     <MenuItem
+                      icon={<FontAwesomeIcon icon={faDownload} />}
+                      onClick={() => {
+                        /* 实现下载功能 */
+                      }}
+                    >
+                      下载
+                    </MenuItem>
+                    <MenuItem
                       icon={<FontAwesomeIcon icon={faTrash} />}
-                      onClick={() => handleDelete(file)}
+                      onClick={() => removeFile(file.id)}
                       color="red.500"
                     >
                       删除

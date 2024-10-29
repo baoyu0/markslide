@@ -12,16 +12,27 @@ export default function PreviewPage() {
   const [content, setContent] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const { colorMode } = useColorMode();
-  const path = searchParams.get("path") || "";
+
+  const fileId = searchParams.get("fileId") || "";
   const type = searchParams.get("type") || "markdown";
 
   useEffect(() => {
     const fetchContent = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch(path);
+        // 这里应该根据 fileId 从后端获取文件内容
+        const response = await fetch(`/api/files/${fileId}`);
         const text = await response.text();
-        setContent(text);
+
+        // 根据预览类型转换内容
+        let convertedContent = text;
+        if (type === "html") {
+          convertedContent = convertMarkdownToHtml(text);
+        } else if (type === "ppt") {
+          convertedContent = convertMarkdownToPPT(text);
+        }
+
+        setContent(convertedContent);
       } catch (error) {
         console.error("Error loading content:", error);
         setContent("# Error\n\nFailed to load content.");
@@ -30,10 +41,10 @@ export default function PreviewPage() {
       }
     };
 
-    if (path) {
+    if (fileId) {
       fetchContent();
     }
-  }, [path]);
+  }, [fileId, type]);
 
   return (
     <Box
