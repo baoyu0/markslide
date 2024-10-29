@@ -14,13 +14,13 @@ interface PPTPreviewProps {
 
 export default function PPTPreview({ content, className }: PPTPreviewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const deckRef = useRef<Reveal.Api | null>(null);
   const { colorMode } = useColorMode();
 
   useEffect(() => {
-    let deck: Reveal.Api | null = null;
-
     if (containerRef.current) {
-      deck = new Reveal(containerRef.current, {
+      // 初始化 Reveal
+      const deck = new Reveal(containerRef.current, {
         embedded: true,
         controls: true,
         progress: true,
@@ -28,12 +28,25 @@ export default function PPTPreview({ content, className }: PPTPreviewProps) {
         hash: false,
         theme: colorMode === "light" ? "white" : "black",
       });
-      deck.initialize();
+
+      // 存储实例引用
+      deckRef.current = deck;
+
+      // 初始化
+      deck.initialize().then(() => {
+        // 初始化完成后的操作（如果需要）
+      });
     }
 
+    // 清理函数
     return () => {
-      if (deck && typeof deck.destroy === "function") {
-        deck.destroy();
+      try {
+        if (deckRef.current) {
+          deckRef.current.destroy();
+          deckRef.current = null;
+        }
+      } catch (error) {
+        console.warn("清理 Reveal 实例时出错:", error);
       }
     };
   }, [content, colorMode]);

@@ -1,7 +1,7 @@
 "use client";
 
-import { Box, Text, VStack, useColorModeValue } from "@chakra-ui/react";
-import { useCallback, useState } from "react";
+import { Box, Text, VStack } from "@chakra-ui/react";
+import { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCloudUploadAlt } from "@fortawesome/free-solid-svg-icons";
@@ -13,10 +13,6 @@ const ALLOWED_FILE_TYPES = process.env.NEXT_PUBLIC_ALLOWED_FILE_TYPES?.split(
 ) || [".md", ".html", ".ppt", ".pptx"];
 
 export default function FileUpload() {
-  const [content, setContent] = useState<string>("");
-  const bgColor = useColorModeValue("white", "gray.700");
-  const borderColor = useColorModeValue("gray.200", "gray.600");
-
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
     if (file) {
@@ -45,9 +41,15 @@ export default function FileUpload() {
       <Box
         {...getRootProps()}
         p={10}
-        bg={bgColor}
+        bg={colorMode === "light" ? "light.surface" : "dark.surface"}
         border="2px dashed"
-        borderColor={isDragActive ? "blue.400" : borderColor}
+        borderColor={
+          isDragActive
+            ? "blue.400"
+            : colorMode === "light"
+              ? "light.border"
+              : "dark.border"
+        }
         borderRadius="lg"
         cursor="pointer"
         transition="all 0.2s"
@@ -61,18 +63,44 @@ export default function FileUpload() {
           <FontAwesomeIcon
             icon={faCloudUploadAlt}
             size="3x"
-            color={isDragActive ? "#4299E1" : "#A0AEC0"}
+            color={
+              isDragActive
+                ? "#4299E1"
+                : colorMode === "light"
+                  ? "#A0AEC0"
+                  : "#A2A7B3"
+            }
           />
           <Text
             textAlign="center"
-            color={isDragActive ? "blue.400" : "gray.500"}
+            color={
+              isDragActive
+                ? "blue.400"
+                : colorMode === "light"
+                  ? "light.text.secondary"
+                  : "dark.text.secondary"
+            }
           >
             {isDragActive ? "松开以上传文件" : "拖拽文件到此处或点击上传"}
           </Text>
-          <Text fontSize="sm" color="gray.500">
+          <Text
+            fontSize="sm"
+            color={
+              colorMode === "light"
+                ? "light.text.tertiary"
+                : "dark.text.tertiary"
+            }
+          >
             支持的文件格式：{ALLOWED_FILE_TYPES.join(", ")}
           </Text>
-          <Text fontSize="sm" color="gray.500">
+          <Text
+            fontSize="sm"
+            color={
+              colorMode === "light"
+                ? "light.text.tertiary"
+                : "dark.text.tertiary"
+            }
+          >
             最大文件大小：{MAX_FILE_SIZE / 1024 / 1024}MB
           </Text>
         </VStack>

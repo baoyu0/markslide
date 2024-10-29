@@ -2,14 +2,12 @@
 
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Box, Spinner, Center, useColorMode } from "@chakra-ui/react";
+import { Box, Spinner, Center } from "@chakra-ui/react";
 import MarkdownPreview from "@/components/preview/MarkdownPreview";
 import HTMLPreview from "@/components/preview/HTMLPreview";
 import PPTPreview from "@/components/preview/PPTPreview";
-import Layout from "@/components/layout/Layout";
 
 export default function PreviewPage() {
-  const { colorMode } = useColorMode();
   const searchParams = useSearchParams();
   const [content, setContent] = useState<string>("");
   const [loading, setLoading] = useState(true);
@@ -34,26 +32,17 @@ export default function PreviewPage() {
 
   if (loading) {
     return (
-      <Layout>
-        <Center h="calc(100vh - 64px)">
-          <Spinner size="xl" />
-        </Center>
-      </Layout>
+      <Center h="100vh">
+        <Spinner size="xl" />
+      </Center>
     );
   }
 
   return (
-    <Layout>
-      <Box
-        minH="calc(100vh - 64px)"
-        w="100%"
-        p={0}
-        bg={colorMode === "light" ? "white" : "gray.800"}
-      >
-        {fileType === "markdown" && <MarkdownPreview content={content} />}
-        {fileType === "html" && <HTMLPreview content={content} />}
-        {fileType === "ppt" && <PPTPreview content={content} />}
-      </Box>
-    </Layout>
+    <Box minH="100vh" w="100%" p={0}>
+      {fileType === "markdown" && <MarkdownPreview content={content} />}
+      {fileType === "html" && <HTMLPreview content={content} />}
+      {fileType === "ppt" && <PPTPreview content={content} />}
+    </Box>
   );
 }

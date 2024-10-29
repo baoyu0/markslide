@@ -1,3 +1,4 @@
+import { Metadata } from "next";
 import { Providers } from "./providers";
 import localFont from "next/font/local";
 import "./globals.css";
@@ -14,27 +15,36 @@ const geistMono = localFont({
   weight: "100 900",
 });
 
+export const metadata: Metadata = {
+  title: process.env.NEXT_PUBLIC_APP_NAME || "Markslide",
+  description:
+    process.env.NEXT_PUBLIC_APP_DESCRIPTION || "一个优雅的文档转换和预览工具",
+  icons: {
+    icon: [
+      {
+        url: "/icon?<generated>",
+        type: "image/png",
+      },
+    ],
+    apple: [
+      {
+        url: "/apple-icon?<generated>",
+        type: "image/png",
+      },
+    ],
+  },
+};
+
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <html lang="zh-CN">
-      <head>
-        <title>{process.env.NEXT_PUBLIC_APP_NAME || "Markslide"}</title>
-        <meta
-          name="description"
-          content={
-            process.env.NEXT_PUBLIC_APP_DESCRIPTION ||
-            "一个优雅的文档转换和预览工具"
-          }
-        />
-        <link rel="icon" href="/favicon.ico" />
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-      </head>
+    <html lang="zh-CN" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        suppressHydrationWarning
       >
         <Providers>{children}</Providers>
       </body>

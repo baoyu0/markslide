@@ -1,7 +1,8 @@
 "use client";
 
-import { Box } from "@chakra-ui/react";
+import { Box, useColorMode } from "@chakra-ui/react";
 import { ReactNode } from "react";
+import { usePathname } from "next/navigation";
 import Navbar from "./Navbar";
 
 interface LayoutProps {
@@ -9,10 +10,18 @@ interface LayoutProps {
 }
 
 export default function Layout({ children }: LayoutProps) {
+  const pathname = usePathname();
+  const { colorMode } = useColorMode();
+  const isPreviewPage = pathname === "/preview";
+
   return (
-    <Box minH="100vh" bg="gray.50">
-      <Navbar />
-      <Box as="main" px={4} py={8}>
+    <Box
+      minH="100vh"
+      bg={colorMode === "light" ? "light.bg" : "dark.bg"}
+      transition="background-color 0.2s ease-in-out"
+    >
+      {!isPreviewPage && <Navbar />}
+      <Box as="main" px={isPreviewPage ? 0 : 4} py={isPreviewPage ? 0 : 8}>
         {children}
       </Box>
     </Box>
