@@ -8,4 +8,4 @@ interface AppState {
 export const useStore = create<AppState>((set) => ({
   darkMode: false,
   toggleDarkMode: () => set((state) => ({ darkMode: !state.darkMode })),
-})); 
+}));
