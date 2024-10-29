@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import {
   Box,
   Table,
@@ -24,7 +25,6 @@ import {
   faPen,
   faTrash,
 } from "@fortawesome/free-solid-svg-icons";
-import { useState } from "react";
 
 interface FileItem {
   id: string;
@@ -82,8 +82,8 @@ export default function FileList() {
   };
 
   const handlePreview = (file: FileItem) => {
-    // TODO: 实现预览功能
-    console.log("Preview:", file);
+    const previewUrl = `/preview?path=${encodeURIComponent(file.path)}&type=${file.type}`;
+    window.open(previewUrl, "_blank");
   };
 
   const handleDownload = (file: FileItem) => {

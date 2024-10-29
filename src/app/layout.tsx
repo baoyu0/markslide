@@ -1,6 +1,4 @@
-'use client';
-
-import { Providers } from './providers';
+import { Providers } from "./providers";
 import localFont from "next/font/local";
 import "./globals.css";
 
@@ -23,7 +21,21 @@ export default function RootLayout({
 }) {
   return (
     <html lang="zh-CN">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <head>
+        <title>{process.env.NEXT_PUBLIC_APP_NAME || "Markslide"}</title>
+        <meta
+          name="description"
+          content={
+            process.env.NEXT_PUBLIC_APP_DESCRIPTION ||
+            "一个优雅的文档转换和预览工具"
+          }
+        />
+        <link rel="icon" href="/favicon.ico" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+      </head>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
         <Providers>{children}</Providers>
       </body>
     </html>
