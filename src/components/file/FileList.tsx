@@ -42,6 +42,16 @@ export default function FileList() {
     window.open(`/preview?fileId=${fileId}&type=${type}`, "_blank");
   };
 
+  const handleEdit = (fileId: string) => {
+    console.log("编辑文件:", fileId);
+    // TODO: 实现编辑功能
+  };
+
+  const handleDownload = (fileId: string) => {
+    console.log("下载文件:", fileId);
+    // TODO: 实现下载功能
+  };
+
   if (files.length === 0) {
     return (
       <Box textAlign="center" py={8}>
@@ -113,17 +123,13 @@ export default function FileList() {
                   <MenuList>
                     <MenuItem
                       icon={<FontAwesomeIcon icon={faEdit} />}
-                      onClick={() => {
-                        /* 实现编辑功能 */
-                      }}
+                      onClick={() => handleEdit(file.id)}
                     >
                       编辑
                     </MenuItem>
                     <MenuItem
                       icon={<FontAwesomeIcon icon={faDownload} />}
-                      onClick={() => {
-                        /* 实现下载功能 */
-                      }}
+                      onClick={() => handleDownload(file.id)}
                     >
                       下载
                     </MenuItem>
