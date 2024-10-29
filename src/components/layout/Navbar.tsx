@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { Box, Container, Flex, Button, useColorMode } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -10,7 +10,7 @@ export default function Navbar() {
   const { colorMode, toggleColorMode } = useColorMode();
 
   return (
-    <Box as="nav" bg={colorMode === 'light' ? 'white' : 'gray.800'} shadow="sm">
+    <Box as="nav" bg={colorMode === "light" ? "white" : "gray.800"} shadow="sm">
       <Container maxW="container.xl">
         <Flex h="16" alignItems="center" justifyContent="space-between">
           <Link href="/" passHref>
@@ -25,14 +25,14 @@ export default function Navbar() {
               onClick={toggleColorMode}
               aria-label="Toggle color mode"
             >
-              <FontAwesomeIcon 
-                icon={colorMode === "light" ? faMoon : faSun} 
+              <FontAwesomeIcon
+                icon={colorMode === "light" ? faMoon : faSun}
                 size="lg"
               />
             </Button>
-            
-            <Link 
-              href="https://github.com/yourusername/markslide" 
+
+            <Link
+              href="https://github.com/baoyu0/markslide"
               target="_blank"
               passHref
             >
@@ -45,4 +45,4 @@ export default function Navbar() {
       </Container>
     </Box>
   );
-} 
+}
