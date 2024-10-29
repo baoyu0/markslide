@@ -154,21 +154,39 @@ export default function Navbar() {
                 <MenuItem
                   icon={<FontAwesomeIcon icon={faSun} />}
                   onClick={() => handleThemeChange("light")}
-                  isActive={mode === "light"}
+                  bg={
+                    mode === "light"
+                      ? colorMode === "light"
+                        ? "light.hover"
+                        : "dark.hover"
+                      : "transparent"
+                  }
                 >
                   日间模式
                 </MenuItem>
                 <MenuItem
                   icon={<FontAwesomeIcon icon={faMoon} />}
                   onClick={() => handleThemeChange("dark")}
-                  isActive={mode === "dark"}
+                  bg={
+                    mode === "dark"
+                      ? colorMode === "light"
+                        ? "light.hover"
+                        : "dark.hover"
+                      : "transparent"
+                  }
                 >
                   夜间模式
                 </MenuItem>
                 <MenuItem
                   icon={<FontAwesomeIcon icon={faDesktop} />}
                   onClick={() => handleThemeChange("system")}
-                  isActive={mode === "system"}
+                  bg={
+                    mode === "system"
+                      ? colorMode === "light"
+                        ? "light.hover"
+                        : "dark.hover"
+                      : "transparent"
+                  }
                 >
                   跟随系统
                 </MenuItem>

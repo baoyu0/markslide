@@ -1,7 +1,7 @@
 "use client";
 
-import { Box, Text, VStack } from "@chakra-ui/react";
-import { useCallback } from "react";
+import { Box, Text, VStack, useColorMode } from "@chakra-ui/react";
+import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCloudUploadAlt } from "@fortawesome/free-solid-svg-icons";
@@ -13,6 +13,9 @@ const ALLOWED_FILE_TYPES = process.env.NEXT_PUBLIC_ALLOWED_FILE_TYPES?.split(
 ) || [".md", ".html", ".ppt", ".pptx"];
 
 export default function FileUpload() {
+  const { colorMode } = useColorMode();
+  const [content, setContent] = useState<string>("");
+
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
     if (file) {
