@@ -3,6 +3,7 @@
 import { Box, useColorMode } from "@chakra-ui/react";
 import DOMPurify from "dompurify";
 import parse from "html-react-parser";
+import { removeYAMLFrontMatter } from "@/utils/contentProcessor";
 
 interface HTMLPreviewProps {
   content: string;
@@ -12,6 +13,7 @@ interface HTMLPreviewProps {
 export default function HTMLPreview({ content, className }: HTMLPreviewProps) {
   const { colorMode } = useColorMode();
   const sanitizedContent = DOMPurify.sanitize(content);
+  const processedContent = removeYAMLFrontMatter(sanitizedContent);
 
   return (
     <Box
@@ -24,7 +26,7 @@ export default function HTMLPreview({ content, className }: HTMLPreviewProps) {
       borderRadius="md"
       shadow="sm"
     >
-      {parse(sanitizedContent)}
+      {parse(processedContent)}
     </Box>
   );
 }

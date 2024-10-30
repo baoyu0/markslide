@@ -18,6 +18,8 @@ import {
   useDisclosure,
   Tooltip,
   useColorMode,
+  ButtonGroup,
+  Text,
 } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -32,40 +34,68 @@ import {
   faCopy,
   faCheck,
   faList,
+  faChevronLeft,
+  faChevronRight,
+  faThLarge,
 } from "@fortawesome/free-solid-svg-icons";
-import { PREVIEW_THEMES, ThemeId } from "@/config/themes";
-import { useCallback, useState } from "react";
-import TableOfContents from "./TableOfContents";
+import { useCallback, useState, useMemo } from "react";
 import { useFullscreen } from "@/hooks/useFullscreen";
+import { TableOfContents } from "@/components/common/TableOfContents";
+import {
+  MARKDOWN_THEMES,
+  HTML_THEMES,
+  PPT_THEMES,
+  ThemeMap,
+  Theme,
+  PPTThemeMap,
+} from "@/config/preview-themes";
 
 interface PreviewToolbarProps {
-  theme: ThemeId;
+  theme: string;
+  previewType?: "markdown" | "html" | "ppt";
   isFullscreenMode: boolean;
-  toc: Array<{ id: string; text: string; level: number }>;
-  onThemeChange: (theme: ThemeId) => void;
+  onThemeChange: (theme: string) => void;
   onFullscreenChange: () => void;
-  onDownload: () => void;
   onPrint: () => void;
+  onDownload: () => void;
   onShare: () => void;
   onCopy: () => void;
+  toc?: Array<{ id: string; text: string; level: number }>;
+  onItemClick?: (id: string) => void;
+  activeId?: string;
+  isPPTMode?: boolean;
+  onPrevSlide?: () => void;
+  onNextSlide?: () => void;
+  onOverview?: () => void;
   canDownload?: boolean;
   canPrint?: boolean;
   canShare?: boolean;
+  currentSlide?: number;
+  totalSlides?: number;
 }
 
 export default function PreviewToolbar({
   theme,
+  previewType = "markdown",
   isFullscreenMode,
-  toc,
   onThemeChange,
   onFullscreenChange,
-  onDownload,
   onPrint,
+  onDownload,
   onShare,
   onCopy,
+  toc = [],
+  onItemClick = () => {},
+  activeId,
+  isPPTMode,
+  onPrevSlide,
+  onNextSlide,
+  onOverview,
   canDownload = true,
   canPrint = true,
   canShare = true,
+  currentSlide,
+  totalSlides,
 }: PreviewToolbarProps) {
   const { colorMode, toggleColorMode } = useColorMode();
   const bg = useColorModeValue("white", "gray.800");
@@ -76,6 +106,36 @@ export default function PreviewToolbar({
   const [isCopying, setIsCopying] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { toggleFullscreen } = useFullscreen();
+
+  const getThemes = useCallback(() => {
+    switch (previewType) {
+      case "markdown":
+        return MARKDOWN_THEMES as ThemeMap;
+      case "html":
+        return HTML_THEMES as ThemeMap;
+      case "ppt":
+        return PPT_THEMES as PPTThemeMap;
+      default:
+        return MARKDOWN_THEMES as ThemeMap;
+    }
+  }, [previewType]);
+
+  const themes = useMemo(() => getThemes(), [getThemes]);
+
+  const handleThemeChange = useCallback(
+    (newTheme: string) => {
+      console.log("点击主题切换:", { currentTheme: theme, newTheme });
+      if (typeof onThemeChange === "function" && themes[newTheme]) {
+        onThemeChange(newTheme);
+        toast({
+          title: `已切换到${themes[newTheme].name}主题`,
+          status: "success",
+          duration: 2000,
+        });
+      }
+    },
+    [theme, onThemeChange, toast, themes],
+  );
 
   const handleCopy = useCallback(async () => {
     try {
@@ -91,23 +151,6 @@ export default function PreviewToolbar({
     onShare();
   }, [onShare]);
 
-  const handleThemeChange = useCallback(
-    (newTheme: ThemeId) => {
-      console.log("点击主题切换:", { currentTheme: theme, newTheme });
-      if (typeof onThemeChange === "function") {
-        onThemeChange(newTheme);
-        toast({
-          title: `已切换到${PREVIEW_THEMES[newTheme].name}主题`,
-          status: "success",
-          duration: 2000,
-        });
-      } else {
-        console.warn("onThemeChange 不是一个函数");
-      }
-    },
-    [theme, onThemeChange, toast],
-  );
-
   const handleFullscreenChange = useCallback(() => {
     toggleFullscreen();
     onFullscreenChange?.();
@@ -117,6 +160,17 @@ export default function PreviewToolbar({
       duration: 2000,
     });
   }, [toggleFullscreen, isFullscreenMode, onFullscreenChange, toast]);
+
+  const slideInfo = useMemo(() => {
+    if (
+      isPPTMode &&
+      typeof currentSlide !== "undefined" &&
+      typeof totalSlides !== "undefined"
+    ) {
+      return `${currentSlide + 1} / ${totalSlides}`;
+    }
+    return null;
+  }, [currentSlide, totalSlides, isPPTMode]);
 
   return (
     <>
@@ -146,7 +200,7 @@ export default function PreviewToolbar({
         <Flex gap={2}>
           <Tooltip label={`切换${colorMode === "light" ? "深色" : "浅色"}模式`}>
             <IconButton
-              aria-label="切换题模式"
+              aria-label="切换主题模式"
               icon={<FontAwesomeIcon icon={faAdjust} />}
               variant="ghost"
               size="sm"
@@ -168,17 +222,17 @@ export default function PreviewToolbar({
               />
             </Tooltip>
             <MenuList>
-              {Object.entries(PREVIEW_THEMES).map(([id, { name }]) => (
+              {Object.entries(themes).map(([id, themeConfig]) => (
                 <MenuItem
                   key={id}
-                  onClick={() => handleThemeChange(id as ThemeId)}
+                  onClick={() => handleThemeChange(id)}
                   icon={
                     theme === id ? (
                       <FontAwesomeIcon icon={faCheck} />
                     ) : undefined
                   }
                 >
-                  {name}主题
+                  {(themeConfig as Theme | { name: string }).name}主题
                 </MenuItem>
               ))}
             </MenuList>
@@ -252,10 +306,49 @@ export default function PreviewToolbar({
           <DrawerCloseButton />
           <DrawerHeader borderBottomWidth="1px">目录</DrawerHeader>
           <DrawerBody>
-            <TableOfContents items={toc} onItemClick={onClose} />
+            <TableOfContents
+              items={toc}
+              activeId={activeId}
+              onItemClick={(id) => {
+                onItemClick(id);
+                onClose();
+              }}
+            />
           </DrawerBody>
         </DrawerContent>
       </Drawer>
+
+      {isPPTMode && (
+        <ButtonGroup size="sm" variant="ghost" spacing={2}>
+          <Tooltip label="上一页">
+            <IconButton
+              aria-label="Previous slide"
+              icon={<FontAwesomeIcon icon={faChevronLeft} />}
+              onClick={onPrevSlide}
+            />
+          </Tooltip>
+          <Tooltip label="下一页">
+            <IconButton
+              aria-label="Next slide"
+              icon={<FontAwesomeIcon icon={faChevronRight} />}
+              onClick={onNextSlide}
+            />
+          </Tooltip>
+          <Tooltip label="幻灯片概览">
+            <IconButton
+              aria-label="Slides overview"
+              icon={<FontAwesomeIcon icon={faThLarge} />}
+              onClick={onOverview}
+            />
+          </Tooltip>
+        </ButtonGroup>
+      )}
+
+      {slideInfo && (
+        <Text fontSize="sm" color="gray.600">
+          {slideInfo}
+        </Text>
+      )}
     </>
   );
 }
