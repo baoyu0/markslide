@@ -14,8 +14,6 @@ import {
   useColorMode,
   Button,
   HStack,
-  Icon,
-  useDisclosure,
   Fade,
   Table,
   Thead,
@@ -23,25 +21,19 @@ import {
   Tr,
   Th,
   Td,
-  ButtonGroup,
-  IconButton,
-  Tooltip,
   Menu,
   MenuButton,
   MenuList,
   MenuItem,
-  Tag,
   MenuDivider,
+  IconButton,
   InputGroup,
   InputLeftElement,
   Input,
   InputRightElement,
 } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faGithub,
-  faMarkdown,
-} from "@fortawesome/free-brands-svg-icons";
+import { faGithub, faMarkdown } from "@fortawesome/free-brands-svg-icons";
 import {
   faEllipsisV,
   faEye,
@@ -52,8 +44,6 @@ import {
   faFilePowerpoint,
   faSearch,
   faTimes,
-  faSortUp,
-  faSortDown,
 } from "@fortawesome/free-solid-svg-icons";
 import { useCallback, useState, useMemo } from "react";
 import Layout from "@/components/layout/Layout";
@@ -66,13 +56,6 @@ import { formatFileSize, formatDate } from "@/utils/format";
 import { usePreviewStore } from "@/store/usePreviewStore";
 
 const MotionBox = motion(Box);
-
-// 添加文件类型图标映射
-const FILE_TYPE_ICONS = {
-  markdown: faMarkdown,
-  html: faFile,
-  ppt: faFilePowerpoint,
-} as const;
 
 // 添加排序类型
 type SortField = "name" | "size" | "createdAt";
@@ -101,11 +84,18 @@ export default function Home() {
     window.open(ENV_CONFIG.app.github, "_blank", "noopener,noreferrer");
   }, []);
 
-  const handlePreview = useCallback((fileId: string, type: "markdown" | "html" | "ppt") => {
-    setCurrentFile(fileId);
-    setPreviewType(type);
-    window.open(`/preview?fileId=${fileId}&type=${type}`, "_blank");
-  }, [setCurrentFile, setPreviewType]);
+  const openDocs = useCallback(() => {
+    window.open(ENV_CONFIG.app.docs, "_blank", "noopener,noreferrer");
+  }, []);
+
+  const handlePreview = useCallback(
+    (fileId: string, type: "markdown" | "html" | "ppt") => {
+      setCurrentFile(fileId);
+      setPreviewType(type);
+      window.open(`/preview?fileId=${fileId}&type=${type}`, "_blank");
+    },
+    [setCurrentFile, setPreviewType],
+  );
 
   const handleEdit = useCallback((fileId: string) => {
     console.log("编辑文件:", fileId);
@@ -115,13 +105,16 @@ export default function Home() {
     console.log("下载文件:", fileId);
   }, []);
 
-  const handleDelete = useCallback(async (fileId: string) => {
-    try {
-      await store.removeFile(fileId);
-    } catch (error) {
-      console.error("删除文件失败:", error);
-    }
-  }, [store]);
+  const handleDelete = useCallback(
+    async (fileId: string) => {
+      try {
+        await store.removeFile(fileId);
+      } catch (error) {
+        console.error("删除文件失败:", error);
+      }
+    },
+    [store],
+  );
 
   // 使用 useMemo 优化文件列表过滤和排序
   const filteredAndSortedFiles = useMemo(() => {
@@ -129,7 +122,7 @@ export default function Home() {
 
     return [...store.files]
       .filter((file) =>
-        file.name.toLowerCase().includes(searchTerm.toLowerCase())
+        file.name.toLowerCase().includes(searchTerm.toLowerCase()),
       )
       .sort((a, b) => {
         const order = sortOrder === "asc" ? 1 : -1;
@@ -139,7 +132,11 @@ export default function Home() {
           case "size":
             return order * (a.size - b.size);
           case "createdAt":
-            return order * (new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+            return (
+              order *
+              (new Date(a.createdAt).getTime() -
+                new Date(b.createdAt).getTime())
+            );
           default:
             return 0;
         }
@@ -150,7 +147,9 @@ export default function Home() {
   const handleSort = useCallback((field: SortField) => {
     setSortField((currentField) => {
       if (currentField === field) {
-        setSortOrder((currentOrder) => (currentOrder === "asc" ? "desc" : "asc"));
+        setSortOrder((currentOrder) =>
+          currentOrder === "asc" ? "desc" : "asc",
+        );
         return field;
       }
       setSortOrder("asc");
@@ -171,8 +170,8 @@ export default function Home() {
     }
 
     return (
-      <Box 
-        overflowX="auto" 
+      <Box
+        overflowX="auto"
         bg={colorMode === "light" ? "white" : "gray.800"}
         borderRadius="lg"
         boxShadow="sm"
@@ -180,7 +179,10 @@ export default function Home() {
         <Box p={4}>
           <InputGroup size="sm" maxW="300px" mb={4}>
             <InputLeftElement pointerEvents="none">
-              <FontAwesomeIcon icon={faSearch} color={colorMode === "light" ? "#718096" : "#A0AEC0"} />
+              <FontAwesomeIcon
+                icon={faSearch}
+                color={colorMode === "light" ? "#718096" : "#A0AEC0"}
+              />
             </InputLeftElement>
             <Input
               placeholder="搜索文件..."
@@ -205,11 +207,17 @@ export default function Home() {
         <Table variant="simple">
           <Thead>
             <Tr>
-              <Th width="40%">文件名</Th>
-              <Th width="15%">大小</Th>
-              <Th width="15%">上传时间</Th>
-              <Th width="15%" textAlign="center">预览</Th>
-              <Th width="15%" textAlign="center">操作</Th>
+              <Th onClick={() => handleSort("name")} cursor="pointer">
+                文件名
+              </Th>
+              <Th onClick={() => handleSort("size")} cursor="pointer">
+                大小
+              </Th>
+              <Th onClick={() => handleSort("createdAt")} cursor="pointer">
+                上传时间
+              </Th>
+              <Th textAlign="center">预览</Th>
+              <Th textAlign="center">操作</Th>
             </Tr>
           </Thead>
           <Tbody>
@@ -292,7 +300,16 @@ export default function Home() {
         </Table>
       </Box>
     );
-  }, [filteredAndSortedFiles, colorMode, handleSort, searchTerm, sortField, sortOrder]);
+  }, [
+    filteredAndSortedFiles,
+    colorMode,
+    searchTerm,
+    handleDelete,
+    handleDownload,
+    handleEdit,
+    handlePreview,
+    handleSort,
+  ]);
 
   if (!store.isInitialized) {
     return (
@@ -361,6 +378,7 @@ export default function Home() {
               </Button>
               <Button
                 leftIcon={<FontAwesomeIcon icon={faMarkdown} />}
+                onClick={openDocs}
                 variant="outline"
                 size="sm"
                 _hover={{
@@ -412,9 +430,7 @@ export default function Home() {
                   </Fade>
                 </TabPanel>
                 <TabPanel p={4}>
-                  <Fade in={isVisible}>
-                    {fileList}
-                  </Fade>
+                  <Fade in={isVisible}>{fileList}</Fade>
                 </TabPanel>
               </TabPanels>
             </Tabs>

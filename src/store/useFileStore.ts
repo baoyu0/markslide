@@ -34,7 +34,6 @@ interface FileState {
 }
 
 let dbPromise: Promise<IDBPDatabase> | null = null;
-const isInitializing = false;
 let initializationPromise: Promise<void> | null = null;
 
 const getDB = async () => {
@@ -61,30 +60,6 @@ const calculateHash = async (content: string) => {
   return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
 };
 
-// 添加测试数据
-const TEST_DATA: FileWithContent[] = [
-  {
-    id: "1",
-    name: "测试文档.md",
-    type: "markdown",
-    size: 1024,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    content: "# 测试文档\n\n这是一个测试文档。",
-    contentHash: "test-hash-1",
-  },
-  {
-    id: "2",
-    name: "示例页面.html",
-    type: "html",
-    size: 2048,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    content: "<h1>示例页面</h1><p>这是一个示例页面。</p>",
-    contentHash: "test-hash-2",
-  },
-];
-
 export const useFileStore = create<FileState>()(
   persist(
     (set, get) => ({
@@ -102,51 +77,11 @@ export const useFileStore = create<FileState>()(
 
         initializationPromise = (async () => {
           try {
-            console.log("Initializing store...");
             const db = await getDB();
-            console.log("Got DB connection");
-
-            const tx = db.transaction([META_STORE, STORE_NAME], 'readwrite');
-            const metaStore = tx.objectStore(META_STORE);
-            const contentStore = tx.objectStore(STORE_NAME);
-
-            // 检查是否需要添加测试数据
-            const existingFiles = await metaStore.getAll();
-            if (!existingFiles || existingFiles.length === 0) {
-              console.log("Adding test data...");
-              for (const file of TEST_DATA) {
-                await contentStore.put({
-                  id: file.id,
-                  content: file.content,
-                  contentHash: file.contentHash,
-                });
-                await metaStore.put({
-                  id: file.id,
-                  name: file.name,
-                  type: file.type,
-                  size: file.size,
-                  createdAt: file.createdAt,
-                  updatedAt: file.updatedAt,
-                  contentHash: file.contentHash,
-                });
-              }
-              console.log("Test data added");
-            }
-
-            const files = await metaStore.getAll();
-            console.log("Got files:", files);
-
-            await tx.done;
-
-            set({ 
-              files: files || [], 
-              isInitialized: true 
-            });
-            console.log("Store initialized with files:", files);
-
+            const files = await db.getAll(META_STORE);
+            set({ files, isInitialized: true });
           } catch (error) {
             console.error("Failed to initialize store:", error);
-            set({ files: [], isInitialized: true });
             throw error;
           } finally {
             initializationPromise = null;
@@ -160,11 +95,13 @@ export const useFileStore = create<FileState>()(
         const db = await getDB();
         const contentHash = await calculateHash(file.content);
 
-        const tx = db.transaction([STORE_NAME, META_STORE], 'readwrite');
+        const tx = db.transaction([STORE_NAME, META_STORE], "readwrite");
 
         try {
           const contentStore = tx.objectStore(STORE_NAME);
-          const existingContent = await contentStore.index("contentHash").get(contentHash);
+          const existingContent = await contentStore
+            .index("contentHash")
+            .get(contentHash);
 
           if (!existingContent) {
             await contentStore.put({
@@ -190,7 +127,6 @@ export const useFileStore = create<FileState>()(
           set((state) => ({
             files: [...state.files, metaInfo],
           }));
-
         } catch (error) {
           console.error("Failed to add file:", error);
           throw error;
@@ -289,6 +225,6 @@ export const useFileStore = create<FileState>()(
           state.initializeStore();
         }
       },
-    }
-  )
+    },
+  ),
 );

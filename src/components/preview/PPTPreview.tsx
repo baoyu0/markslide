@@ -25,8 +25,8 @@ export default function PPTPreview({ content, className }: PPTPreviewProps) {
         controls: true,
         progress: true,
         center: true,
-        hash: false,
-        theme: colorMode === "light" ? "white" : "black",
+        hash: true,
+        transition: "slide",
       });
 
       // 存储实例引用

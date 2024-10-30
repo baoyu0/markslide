@@ -1,5 +1,9 @@
 import { extendTheme } from "@chakra-ui/react";
 
+interface GlobalStyleProps {
+  colorMode: "light" | "dark";
+}
+
 export const theme = extendTheme({
   config: {
     initialColorMode: "system",
@@ -48,11 +52,11 @@ export const theme = extendTheme({
     },
   },
   styles: {
-    global: (props: any) => ({
+    global: (props: GlobalStyleProps) => ({
       body: {
         bg: props.colorMode === "light" ? "gray.50" : "gray.900",
         color: props.colorMode === "light" ? "gray.900" : "white",
       },
     }),
   },
-}); 
+});

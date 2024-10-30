@@ -3,7 +3,7 @@
 import { Box, ButtonGroup, Button, useColorMode } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faMarkdown,
+  faFileAlt,
   faCode,
   faDesktop,
 } from "@fortawesome/free-solid-svg-icons";
@@ -23,7 +23,7 @@ export default function PreviewSelector({
     <Box mb={4}>
       <ButtonGroup isAttached variant="outline" size="sm">
         <Button
-          leftIcon={<FontAwesomeIcon icon={faMarkdown} />}
+          leftIcon={<FontAwesomeIcon icon={faFileAlt} />}
           isActive={currentType === "markdown"}
           onClick={() => onTypeChange("markdown")}
           bg={
