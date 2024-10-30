@@ -9,6 +9,9 @@ import {
   MenuItem,
   Tooltip,
   useColorModeValue,
+  useToast,
+  MenuDivider,
+  Portal,
 } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -21,19 +24,25 @@ import {
   faPrint,
   faShare,
   faCopy,
+  faCheck,
 } from "@fortawesome/free-solid-svg-icons";
+import { PREVIEW_THEMES, ThemeId } from "@/config/themes";
+import { useCallback, useState } from "react";
 
 interface PreviewToolbarProps {
-  theme: string;
+  theme: ThemeId;
   mode: "light" | "dark";
   isFullscreen: boolean;
-  onThemeChange: (theme: string) => void;
+  onThemeChange: (theme: ThemeId) => void;
   onModeChange: () => void;
   onFullscreenChange: () => void;
   onDownload: () => void;
   onPrint: () => void;
   onShare: () => void;
   onCopy: () => void;
+  canDownload?: boolean;
+  canPrint?: boolean;
+  canShare?: boolean;
 }
 
 export default function PreviewToolbar({
@@ -47,16 +56,56 @@ export default function PreviewToolbar({
   onPrint,
   onShare,
   onCopy,
+  canDownload = true,
+  canPrint = true,
+  canShare = true,
 }: PreviewToolbarProps) {
   const bg = useColorModeValue("white", "gray.800");
   const borderColor = useColorModeValue("gray.200", "gray.700");
   const iconColor = useColorModeValue("gray.600", "gray.400");
   const hoverBg = useColorModeValue("gray.50", "gray.700");
+  const toast = useToast();
+  const [isCopying, setIsCopying] = useState(false);
 
-  const themes = [
-    { id: "github", name: "GitHub" },
-    { id: "notion", name: "Notion" },
-  ];
+  const handleCopy = useCallback(async () => {
+    try {
+      setIsCopying(true);
+      await onCopy();
+      toast({
+        title: "复制成功",
+        status: "success",
+        duration: 2000,
+      });
+    } catch (error) {
+      toast({
+        title: "复制失败",
+        description: (error as Error).message,
+        status: "error",
+        duration: 3000,
+      });
+    } finally {
+      setIsCopying(false);
+    }
+  }, [onCopy, toast]);
+
+  const handleShare = useCallback(async () => {
+    try {
+      await onShare();
+      toast({
+        title: "分享成功",
+        description: "链接已复制到剪贴板",
+        status: "success",
+        duration: 2000,
+      });
+    } catch (error) {
+      toast({
+        title: "分享失败",
+        description: (error as Error).message,
+        status: "error",
+        duration: 3000,
+      });
+    }
+  }, [onShare, toast]);
 
   return (
     <Flex
@@ -84,17 +133,20 @@ export default function PreviewToolbar({
               _hover={{ bg: hoverBg }}
             />
           </Tooltip>
-          <MenuList>
-            {themes.map((t) => (
-              <MenuItem
-                key={t.id}
-                onClick={() => onThemeChange(t.id)}
-                bg={theme === t.id ? hoverBg : "transparent"}
-              >
-                {t.name}
-              </MenuItem>
-            ))}
-          </MenuList>
+          <Portal>
+            <MenuList>
+              {Object.entries(PREVIEW_THEMES).map(([id, themeConfig]) => (
+                <MenuItem
+                  key={id}
+                  onClick={() => onThemeChange(id as ThemeId)}
+                  bg={theme === id ? hoverBg : "transparent"}
+                  icon={theme === id ? <FontAwesomeIcon icon={faCheck} /> : undefined}
+                >
+                  {themeConfig.name}
+                </MenuItem>
+              ))}
+            </MenuList>
+          </Portal>
         </Menu>
 
         <Tooltip label={mode === "light" ? "切换到暗色" : "切换到亮色"}>
@@ -113,27 +165,30 @@ export default function PreviewToolbar({
       <Flex gap={2}>
         <Tooltip label="复制内容">
           <IconButton
-            icon={<FontAwesomeIcon icon={faCopy} />}
-            onClick={onCopy}
+            icon={<FontAwesomeIcon icon={isCopying ? faCheck : faCopy} />}
+            onClick={handleCopy}
             variant="ghost"
             size="sm"
             aria-label="Copy content"
-            color={iconColor}
+            color={isCopying ? "green.500" : iconColor}
             _hover={{ bg: hoverBg }}
+            isDisabled={isCopying}
           />
         </Tooltip>
 
-        <Tooltip label="下载文档">
-          <IconButton
-            icon={<FontAwesomeIcon icon={faDownload} />}
-            onClick={onDownload}
-            variant="ghost"
-            size="sm"
-            aria-label="Download"
-            color={iconColor}
-            _hover={{ bg: hoverBg }}
-          />
-        </Tooltip>
+        {canDownload && (
+          <Tooltip label="下载文档">
+            <IconButton
+              icon={<FontAwesomeIcon icon={faDownload} />}
+              onClick={onDownload}
+              variant="ghost"
+              size="sm"
+              aria-label="Download"
+              color={iconColor}
+              _hover={{ bg: hoverBg }}
+            />
+          </Tooltip>
+        )}
 
         <Tooltip label={isFullscreen ? "退出全屏" : "全屏模式"}>
           <IconButton
@@ -158,20 +213,26 @@ export default function PreviewToolbar({
             color={iconColor}
             _hover={{ bg: hoverBg }}
           />
-          <MenuList>
-            <MenuItem
-              onClick={onPrint}
-              icon={<FontAwesomeIcon icon={faPrint} />}
-            >
-              打印文档
-            </MenuItem>
-            <MenuItem
-              onClick={onShare}
-              icon={<FontAwesomeIcon icon={faShare} />}
-            >
-              分享文档
-            </MenuItem>
-          </MenuList>
+          <Portal>
+            <MenuList>
+              {canPrint && (
+                <MenuItem
+                  onClick={onPrint}
+                  icon={<FontAwesomeIcon icon={faPrint} />}
+                >
+                  打印文档
+                </MenuItem>
+              )}
+              {canShare && (
+                <MenuItem
+                  onClick={handleShare}
+                  icon={<FontAwesomeIcon icon={faShare} />}
+                >
+                  分享文档
+                </MenuItem>
+              )}
+            </MenuList>
+          </Portal>
         </Menu>
       </Flex>
     </Flex>

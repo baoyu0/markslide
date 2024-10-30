@@ -8,51 +8,71 @@ import {
   Tr,
   Th,
   Td,
-  IconButton,
+  Text,
   Menu,
   MenuButton,
   MenuList,
   MenuItem,
-  Text,
+  IconButton,
+  ButtonGroup,
   Tooltip,
+  useColorMode,
+  Skeleton,
 } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faEye,
-  faTrash,
-  faEdit,
-  faDownload,
-  faFileAlt,
-  faCode,
-  faDesktop,
   faEllipsisV,
+  faEye,
+  faDownload,
+  faEdit,
+  faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import { useFileStore } from "@/store/useFileStore";
-import { usePreviewStore } from "@/store/usePreviewStore";
 import { formatFileSize, formatDate } from "@/utils/format";
+import { useCallback } from "react";
+import { usePreviewStore } from "@/store/usePreviewStore";
 
 export default function FileList() {
-  const files = useFileStore((state) => state.files);
-  const removeFile = useFileStore((state) => state.removeFile);
+  const { colorMode } = useColorMode();
+  const store = useFileStore();
   const { setCurrentFile, setPreviewType } = usePreviewStore();
 
-  const handlePreview = (fileId: string, type: "markdown" | "html" | "ppt") => {
+  // 处理函数
+  const handlePreview = useCallback((fileId: string, type: "markdown" | "html" | "ppt") => {
     setCurrentFile(fileId);
     setPreviewType(type);
     window.open(`/preview?fileId=${fileId}&type=${type}`, "_blank");
-  };
+  }, [setCurrentFile, setPreviewType]);
 
-  const handleEdit = (fileId: string) => {
+  const handleEdit = useCallback((fileId: string) => {
     console.log("编辑文件:", fileId);
-    // TODO: 实现编辑功能
-  };
+  }, []);
 
-  const handleDownload = (fileId: string) => {
+  const handleDownload = useCallback((fileId: string) => {
     console.log("下载文件:", fileId);
-    // TODO: 实现下载功能
-  };
+  }, []);
 
-  if (files.length === 0) {
+  const handleDelete = useCallback(async (fileId: string) => {
+    try {
+      await store.removeFile(fileId);
+    } catch (error) {
+      console.error("删除文件失败:", error);
+    }
+  }, [store]);
+
+  // 显示加载状态
+  if (!store.isInitialized) {
+    return (
+      <Box>
+        {[...Array(3)].map((_, index) => (
+          <Skeleton key={index} height="50px" mb={2} />
+        ))}
+      </Box>
+    );
+  }
+
+  // 显示空状态
+  if (!store.files || store.files.length === 0) {
     return (
       <Box textAlign="center" py={8}>
         <Text color="gray.500">暂无文件</Text>
@@ -60,8 +80,11 @@ export default function FileList() {
     );
   }
 
+  console.log("Rendering files:", store.files);
+
+  // 渲染文件列表
   return (
-    <Box overflowX="auto">
+    <Box overflowX="auto" bg={colorMode === "light" ? "white" : "gray.800"} borderRadius="lg" p={4}>
       <Table variant="simple">
         <Thead>
           <Tr>
@@ -73,53 +96,49 @@ export default function FileList() {
           </Tr>
         </Thead>
         <Tbody>
-          {files.map((file) => (
-            <Tr key={file.id}>
+          {store.files.map((file) => (
+            <Tr
+              key={file.id}
+              _hover={{
+                bg: colorMode === "light" ? "gray.50" : "gray.700",
+              }}
+            >
               <Td>{file.name}</Td>
               <Td>{formatFileSize(file.size)}</Td>
               <Td>{formatDate(file.createdAt)}</Td>
               <Td>
-                <Menu>
-                  <Tooltip label="选择预览模式">
-                    <MenuButton
-                      as={IconButton}
+                <ButtonGroup size="sm" variant="ghost" spacing={2}>
+                  <Tooltip label="Markdown 预览">
+                    <IconButton
+                      aria-label="Markdown preview"
                       icon={<FontAwesomeIcon icon={faEye} />}
-                      variant="ghost"
-                      size="sm"
+                      onClick={() => handlePreview(file.id, "markdown")}
                     />
                   </Tooltip>
-                  <MenuList>
-                    <MenuItem
-                      icon={<FontAwesomeIcon icon={faFileAlt} />}
-                      onClick={() => handlePreview(file.id, "markdown")}
-                    >
-                      Markdown 预览
-                    </MenuItem>
-                    <MenuItem
-                      icon={<FontAwesomeIcon icon={faCode} />}
+                  <Tooltip label="HTML 预览">
+                    <IconButton
+                      aria-label="HTML preview"
+                      icon={<FontAwesomeIcon icon={faEye} />}
                       onClick={() => handlePreview(file.id, "html")}
-                    >
-                      HTML 预览
-                    </MenuItem>
-                    <MenuItem
-                      icon={<FontAwesomeIcon icon={faDesktop} />}
+                    />
+                  </Tooltip>
+                  <Tooltip label="PPT 预览">
+                    <IconButton
+                      aria-label="PPT preview"
+                      icon={<FontAwesomeIcon icon={faEye} />}
                       onClick={() => handlePreview(file.id, "ppt")}
-                    >
-                      PPT 预览
-                    </MenuItem>
-                  </MenuList>
-                </Menu>
+                    />
+                  </Tooltip>
+                </ButtonGroup>
               </Td>
               <Td>
                 <Menu>
-                  <Tooltip label="更多操作">
-                    <MenuButton
-                      as={IconButton}
-                      icon={<FontAwesomeIcon icon={faEllipsisV} />}
-                      variant="ghost"
-                      size="sm"
-                    />
-                  </Tooltip>
+                  <MenuButton
+                    as={IconButton}
+                    icon={<FontAwesomeIcon icon={faEllipsisV} />}
+                    variant="ghost"
+                    size="sm"
+                  />
                   <MenuList>
                     <MenuItem
                       icon={<FontAwesomeIcon icon={faEdit} />}
@@ -135,7 +154,7 @@ export default function FileList() {
                     </MenuItem>
                     <MenuItem
                       icon={<FontAwesomeIcon icon={faTrash} />}
-                      onClick={() => removeFile(file.id)}
+                      onClick={() => handleDelete(file.id)}
                       color="red.500"
                     >
                       删除

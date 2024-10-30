@@ -1,50 +1,76 @@
 "use client";
 
-import { Box, useColorMode } from "@chakra-ui/react";
+import { Box, useColorMode, useToast } from "@chakra-ui/react";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useFileStore } from "@/store/useFileStore";
+import { FileConverter } from "@/utils/FileConverter";
 import MarkdownPreview from "@/components/preview/MarkdownPreview";
 import HTMLPreview from "@/components/preview/HTMLPreview";
 import PPTPreview from "@/components/preview/PPTPreview";
+import LoadingSpinner from "@/components/common/LoadingSpinner";
+import ErrorDisplay from "@/components/common/ErrorDisplay";
+
+type PreviewType = "markdown" | "html" | "ppt";
 
 export default function PreviewPage() {
   const searchParams = useSearchParams();
   const [content, setContent] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const { colorMode } = useColorMode();
+  const toast = useToast();
+  const getFile = useFileStore((state) => state.getFile);
 
-  const fileId = searchParams.get("fileId") || "";
-  const type = searchParams.get("type") || "markdown";
+  const fileId = searchParams.get("fileId");
+  const type = (searchParams.get("type") || "markdown") as PreviewType;
 
   useEffect(() => {
     const fetchContent = async () => {
-      setIsLoading(true);
-      try {
-        // 这里应该根据 fileId 从后端获取文件内容
-        const response = await fetch(`/api/files/${fileId}`);
-        const text = await response.text();
+      if (!fileId) {
+        setError("未找到文件ID");
+        setIsLoading(false);
+        return;
+      }
 
-        // 根据预览类型转换内容
-        let convertedContent = text;
-        if (type === "html") {
-          convertedContent = convertMarkdownToHtml(text);
-        } else if (type === "ppt") {
-          convertedContent = convertMarkdownToPPT(text);
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        const file = await getFile(fileId);
+        
+        if (!file) {
+          throw new Error("文件不存在");
         }
 
-        setContent(convertedContent);
+        // 根据预览类型转换内容
+        let convertedContent = file.content;
+        try {
+          if (type !== file.type) {
+            convertedContent = FileConverter.convert(file.content, file.type, type);
+          }
+          setContent(convertedContent);
+        } catch (conversionError) {
+          throw new Error(`文件转换失败: ${(conversionError as Error).message}`);
+        }
+
       } catch (error) {
-        console.error("Error loading content:", error);
-        setContent("# Error\n\nFailed to load content.");
+        const errorMessage = (error as Error).message;
+        setError(errorMessage);
+        toast({
+          title: "加载失败",
+          description: errorMessage,
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
       } finally {
         setIsLoading(false);
       }
     };
 
-    if (fileId) {
-      fetchContent();
-    }
-  }, [fileId, type]);
+    fetchContent();
+  }, [fileId, type, getFile, toast]);
 
   return (
     <Box
@@ -53,32 +79,9 @@ export default function PreviewPage() {
       position="relative"
     >
       {isLoading ? (
-        <Box
-          position="fixed"
-          top="50%"
-          left="50%"
-          transform="translate(-50%, -50%)"
-          textAlign="center"
-        >
-          <Box
-            as="div"
-            className="loading-spinner"
-            border="4px solid"
-            borderColor={colorMode === "light" ? "gray.200" : "gray.700"}
-            borderTopColor={colorMode === "light" ? "blue.500" : "blue.200"}
-            borderRadius="50%"
-            w="40px"
-            h="40px"
-            animation="spin 1s linear infinite"
-            mb={4}
-          />
-          <Box
-            color={colorMode === "light" ? "gray.600" : "gray.400"}
-            fontSize="sm"
-          >
-            加载中...
-          </Box>
-        </Box>
+        <LoadingSpinner />
+      ) : error ? (
+        <ErrorDisplay message={error} />
       ) : (
         <>
           {type === "markdown" && <MarkdownPreview content={content} />}
@@ -88,40 +91,10 @@ export default function PreviewPage() {
       )}
 
       <style jsx global>{`
-        @keyframes spin {
-          0% {
-            transform: rotate(0deg);
-          }
-          100% {
-            transform: rotate(360deg);
-          }
-        }
-
-        /* 滚动条样式 */
-        ::-webkit-scrollbar {
-          width: 8px;
-          height: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-          background: ${colorMode === "light" ? "#f1f1f1" : "#2d3748"};
-        }
-
-        ::-webkit-scrollbar-thumb {
-          background: ${colorMode === "light" ? "#888" : "#4a5568"};
-          border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-          background: ${colorMode === "light" ? "#555" : "#718096"};
-        }
-
-        /* 平滑滚动 */
         html {
           scroll-behavior: smooth;
         }
 
-        /* 选中文本样式 */
         ::selection {
           background: ${colorMode === "light" ? "#3182ce40" : "#90cdf440"};
           color: inherit;
