@@ -4,10 +4,12 @@
   overflow: hidden;
   background-color: rgba(0, 0, 0, 0.9);
   padding: 20px;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .reveal {
   height: 100%;
+  transition: all 0.3s ease;
 }
 
 .reveal .slides {
@@ -181,4 +183,41 @@
   --h3-size: 1.5em;
   --text-size: 1.2em;
   --code-size: 1em;
+}
+
+.themeTransition {
+  animation: themeChange 0.3s ease-in-out;
+}
+
+@keyframes themeChange {
+  0% {
+    opacity: 0.8;
+    transform: scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 10px;
+  }
+
+  .reveal {
+    font-size: 90%;
+  }
+
+  .toolbar {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .controls {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+  }
 }

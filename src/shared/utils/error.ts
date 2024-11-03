@@ -1,25 +1,48 @@
 import { useToast } from '@chakra-ui/react'
 
-export function useErrorHandler() {
+export class PreviewError extends Error {
+  constructor(
+    message: string,
+    public code: string,
+    public details?: unknown
+  ) {
+    super(message)
+    this.name = 'PreviewError'
+  }
+}
+
+export function usePreviewError() {
   const toast = useToast()
 
-  const handleError = (error: unknown, title = "操作失败") => {
-    console.error(error)
-    toast({
-      title,
-      description: error instanceof Error ? error.message : "发生未知错误",
-      status: "error",
-      duration: 3000,
-      isClosable: true,
-    })
+  const handleError = (error: unknown) => {
+    if (error instanceof PreviewError) {
+      toast({
+        title: '预览错误',
+        description: error.message,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      })
+      console.error(`[${error.code}]`, error.details)
+    } else {
+      toast({
+        title: '未知错误',
+        description: '预览过程中发生错误，请刷新页面重试',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      })
+      console.error(error)
+    }
   }
 
   const handleSuccess = (message: string) => {
     toast({
-      title: "操作成功",
+      title: '成功',
       description: message,
-      status: "success",
-      duration: 2000,
+      status: 'success',
+      duration: 3000,
+      isClosable: true,
     })
   }
 

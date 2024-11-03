@@ -9,24 +9,36 @@ import {
   IconButton,
   Tooltip,
   useColorMode,
-  useToast,
 } from '@chakra-ui/react';
-import { DownloadIcon } from '@chakra-ui/icons';
+import { 
+  DownloadIcon,
+  NotesIcon,
+  OverviewIcon,
+  FullscreenIcon,
+} from '@/components/icons';
 import { usePptPreviewStore } from '../store/store';
 import { PPT_THEMES, TRANSITIONS } from '../themes';
 import { exportToPPT } from '../utils/export';
-import { useErrorHandler } from '@/shared/utils/error';
+import { usePreviewError } from '@/shared/utils/error';
 
 interface ToolbarProps {
   fileId: string;
   fileName: string;
   content: string;
+  onShowNotes: () => void;
+  onShowOverview: () => void;
 }
 
-export default function Toolbar({ fileId, fileName, content }: ToolbarProps) {
+export default function Toolbar({
+  fileId,
+  fileName,
+  content,
+  onShowNotes,
+  onShowOverview,
+}: ToolbarProps) {
   const { theme, transition, fontSize, setTheme, setTransition, setFontSize } = usePptPreviewStore();
   const { colorMode } = useColorMode();
-  const { handleError, handleSuccess } = useErrorHandler();
+  const { handleError, handleSuccess } = usePreviewError();
 
   const handleExport = async () => {
     try {
@@ -37,7 +49,7 @@ export default function Toolbar({ fileId, fileName, content }: ToolbarProps) {
       });
       handleSuccess('PPT 导出成功');
     } catch (error) {
-      handleError(error, 'PPT 导出失败');
+      handleError(error);
     }
   };
 
@@ -49,7 +61,7 @@ export default function Toolbar({ fileId, fileName, content }: ToolbarProps) {
       className="toolbar-animation"
     >
       <HStack spacing={4}>
-        <ButtonGroup spacing={2}>
+        <ButtonGroup variant="outline" spacing={2}>
           {Object.entries(PPT_THEMES).map(([key, value]) => (
             <Button
               key={key}
@@ -88,15 +100,44 @@ export default function Toolbar({ fileId, fileName, content }: ToolbarProps) {
           <option value="20px">20px</option>
         </Select>
 
-        <Tooltip label="导出 PPT">
-          <IconButton
-            aria-label="Export PPT"
-            icon={<DownloadIcon />}
-            onClick={handleExport}
-            size="sm"
-            className="export-button-animation"
-          />
-        </Tooltip>
+        <ButtonGroup spacing={2}>
+          <Tooltip label="演讲者注释">
+            <IconButton
+              aria-label="Speaker Notes"
+              icon={<NotesIcon />}
+              onClick={onShowNotes}
+              variant="ghost"
+            />
+          </Tooltip>
+
+          <Tooltip label="幻灯片概览">
+            <IconButton
+              aria-label="Slide Overview"
+              icon={<OverviewIcon />}
+              onClick={onShowOverview}
+              variant="ghost"
+            />
+          </Tooltip>
+
+          <Tooltip label="全屏">
+            <IconButton
+              aria-label="Fullscreen"
+              icon={<FullscreenIcon />}
+              onClick={() => document.documentElement.requestFullscreen()}
+              variant="ghost"
+            />
+          </Tooltip>
+
+          <Tooltip label="导出 PPT">
+            <IconButton
+              aria-label="Export PPT"
+              icon={<DownloadIcon />}
+              onClick={handleExport}
+              variant="ghost"
+              className="export-button-animation"
+            />
+          </Tooltip>
+        </ButtonGroup>
       </HStack>
     </Box>
   );

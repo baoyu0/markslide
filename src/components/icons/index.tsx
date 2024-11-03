@@ -19,6 +19,9 @@ import {
   FaSave,
   FaPlus,
   FaTags,
+  FaStickyNote,
+  FaThLarge,
+  FaExpand,
 } from 'react-icons/fa'
 
 export const EyeIcon = (props: IconProps) => <Icon as={FaEye} {...props} />
@@ -36,4 +39,7 @@ export const CodeIcon = (props: IconProps) => <Icon as={FaCode} {...props} />
 export const QuoteIcon = (props: IconProps) => <Icon as={FaQuoteRight} {...props} />
 export const SaveIcon = (props: IconProps) => <Icon as={FaSave} {...props} />
 export const AddIcon = (props: IconProps) => <Icon as={FaPlus} {...props} />
-export const TagIcon = (props: IconProps) => <Icon as={FaTags} {...props} /> 
+export const TagIcon = (props: IconProps) => <Icon as={FaTags} {...props} />
+export const NotesIcon = (props: IconProps) => <Icon as={FaStickyNote} {...props} />
+export const OverviewIcon = (props: IconProps) => <Icon as={FaThLarge} {...props} />
+export const FullscreenIcon = (props: IconProps) => <Icon as={FaExpand} {...props} /> 
