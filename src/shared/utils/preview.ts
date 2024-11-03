@@ -5,18 +5,35 @@ export function usePreview() {
   const router = useRouter()
 
   const openPreview = (mode: PreviewMode, fileId: string) => {
-    switch (mode) {
-      case 'markdown':
-        router.push(`/markdown-preview/${fileId}`)
-        break
-      case 'html':
-        router.push(`/html-preview/${fileId}`)
-        break
-      case 'ppt':
-        router.push(`/ppt-preview/${fileId}`)
-        break
-    }
+    const url = `/${mode}-preview/${fileId}`
+    window.open(url, '_blank')
   }
 
   return { openPreview }
+}
+
+export function getPreviewIcon(mode: PreviewMode) {
+  switch (mode) {
+    case 'markdown':
+      return 'markdown'
+    case 'html':
+      return 'html5'
+    case 'ppt':
+      return 'file-powerpoint'
+    default:
+      return 'file'
+  }
+}
+
+export function getPreviewTooltip(mode: PreviewMode) {
+  switch (mode) {
+    case 'markdown':
+      return '预览 Markdown'
+    case 'html':
+      return '预览 HTML'
+    case 'ppt':
+      return '预览 PPT'
+    default:
+      return '预览'
+  }
 } 

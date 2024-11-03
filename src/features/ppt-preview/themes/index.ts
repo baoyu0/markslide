@@ -64,6 +64,57 @@ export const PPT_THEMES = {
         code: "1em"
       }
     }
+  },
+  elegant: {
+    name: "优雅经典",
+    styles: {
+      backgroundColor: "#f8f9fa",
+      color: "#343a40",
+      headingColor: "#495057",
+      linkColor: "#495057",
+      fontFamily: "'Times New Roman', 'SimSun', serif",
+      fontSize: {
+        h1: "2.5em",
+        h2: "2em",
+        h3: "1.6em",
+        text: "1.3em",
+        code: "1em"
+      }
+    }
+  },
+  nature: {
+    name: "自然清新",
+    styles: {
+      backgroundColor: "#f1f8e9",
+      color: "#33691e",
+      headingColor: "#1b5e20",
+      linkColor: "#2e7d32",
+      fontFamily: "'Microsoft YaHei', 'SimSun', sans-serif",
+      fontSize: {
+        h1: "2.3em",
+        h2: "1.9em",
+        h3: "1.5em",
+        text: "1.2em",
+        code: "0.9em"
+      }
+    }
+  },
+  business: {
+    name: "商务专业",
+    styles: {
+      backgroundColor: "#eceff1",
+      color: "#263238",
+      headingColor: "#0d47a1",
+      linkColor: "#1565c0",
+      fontFamily: "'Arial', 'Microsoft YaHei', sans-serif",
+      fontSize: {
+        h1: "2.2em",
+        h2: "1.8em",
+        h3: "1.5em",
+        text: "1.2em",
+        code: "0.9em"
+      }
+    }
   }
 } as const;
 

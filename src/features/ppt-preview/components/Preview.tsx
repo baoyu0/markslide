@@ -6,6 +6,8 @@ import { usePptPreviewStore } from '../store/store';
 import { PPT_THEMES } from '../themes';
 import styles from '../styles/preview.module.css';
 import Toolbar from './Toolbar';
+import SpeakerNotes from './SpeakerNotes';
+import SlideOverview from './SlideOverview';
 
 // 动态导入 Reveal.js
 let Reveal: any = null;
@@ -27,6 +29,11 @@ export default function Preview({ content, fileId, fileName }: PreviewProps) {
   const themeStyles = PPT_THEMES[theme].styles;
   const [isClient, setIsClient] = useState(false);
   const [deck, setDeck] = useState<any>(null);
+  const [showNotes, setShowNotes] = useState(false);
+  const [showOverview, setShowOverview] = useState(false);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [notes, setNotes] = useState<string[]>([]);
+  const [slides, setSlides] = useState<string[]>([]);
 
   useEffect(() => {
     setIsClient(true);
@@ -38,25 +45,49 @@ export default function Preview({ content, fileId, fileName }: PreviewProps) {
     const initReveal = async () => {
       if (isClient && deckRef.current && Reveal) {
         instance = new Reveal(deckRef.current, {
-          embedded: true,
+          embedded: false,
           hash: true,
           transition,
           backgroundTransition: 'fade',
-          width: '100%',
-          height: '100%',
-          margin: 0.1,
+          width: 1200,
+          height: 800,
+          margin: 0.15,
           minScale: 0.2,
           maxScale: 2.0,
           controls: true,
           progress: true,
-          center: false,
-          touch: true,
+          center: true,
+          touch: {
+            swipe: true,
+            passive: true
+          },
           hideInactiveCursor: true,
           hideCursorTime: 3000,
           slideNumber: true,
           keyboard: true,
           overview: true,
           fragments: true,
+          fragmentInURL: true,
+          help: true,
+          mouseWheel: true,
+          previewLinks: true,
+          autoPlayMedia: true,
+          autoSlide: 0,
+          loop: false,
+          rtl: false,
+          navigationMode: 'linear',
+          shuffle: false,
+          showNotes: false,
+          preloadIframes: true,
+          autoAnimate: true,
+          controlsTutorial: true,
+          controlsLayout: 'bottom-right',
+          controlsBackArrows: 'faded',
+          parallaxBackgroundImage: '',
+          parallaxBackgroundSize: '',
+          parallaxBackgroundHorizontal: 200,
+          parallaxBackgroundVertical: 50,
+          display: 'flex',
         });
 
         try {
@@ -82,11 +113,36 @@ export default function Preview({ content, fileId, fileName }: PreviewProps) {
     if (deck) {
       deck.configure({
         transition,
-        backgroundTransition: 'fade'
+        backgroundTransition: 'fade',
+        touch: {
+          swipe: true,
+          passive: true
+        }
       });
       deck.sync();
     }
   }, [deck, theme, transition]);
+
+  useEffect(() => {
+    if (deck) {
+      deck.on('slidechanged', (event: any) => {
+        setCurrentSlide(event.indexh)
+      })
+    }
+  }, [deck])
+
+  useEffect(() => {
+    // 解析幻灯片内容和注释
+    const slideContent = content.split('\n---\n')
+    const slideHtml = slideContent.map(slide => {
+      const [content, note] = slide.split('\n???\n')
+      if (note) {
+        setNotes(prev => [...prev, note.trim()])
+      }
+      return content
+    })
+    setSlides(slideHtml)
+  }, [content])
 
   if (!isClient) {
     return null;
@@ -94,7 +150,13 @@ export default function Preview({ content, fileId, fileName }: PreviewProps) {
 
   return (
     <Box>
-      <Toolbar fileId={fileId} fileName={fileName} content={content} />
+      <Toolbar 
+        fileId={fileId} 
+        fileName={fileName} 
+        content={content}
+        onShowNotes={() => setShowNotes(true)}
+        onShowOverview={() => setShowOverview(true)}
+      />
       
       <Box 
         className={`${styles.container} theme-${theme}`}
@@ -123,6 +185,23 @@ export default function Preview({ content, fileId, fileName }: PreviewProps) {
           />
         </div>
       </Box>
+
+      <SpeakerNotes
+        isOpen={showNotes}
+        onClose={() => setShowNotes(false)}
+        notes={notes}
+        currentSlide={currentSlide}
+      />
+
+      <SlideOverview
+        isOpen={showOverview}
+        onClose={() => setShowOverview(false)}
+        slides={slides}
+        currentSlide={currentSlide}
+        onSlideSelect={(index) => {
+          deck?.slide(index)
+        }}
+      />
     </Box>
   );
 } 
