@@ -1,14 +1,21 @@
 'use client';
 
 import { useParams } from 'next/navigation'
-import { Box } from '@chakra-ui/react'
+import { Box, Spinner, Center } from '@chakra-ui/react'
 import { useFileStore } from '@/shared/stores/fileStore'
 import dynamic from 'next/dynamic'
 import PreviewContainer from '@/components/preview/PreviewContainer'
 
 const Preview = dynamic(
   () => import('@/features/html-preview/components/Preview'),
-  { ssr: false }
+  { 
+    ssr: false,
+    loading: () => (
+      <Center h="calc(100vh - 120px)">
+        <Spinner size="xl" />
+      </Center>
+    )
+  }
 )
 
 export default function HtmlPreviewPage() {
@@ -22,7 +29,11 @@ export default function HtmlPreviewPage() {
 
   return (
     <PreviewContainer fileId={fileId} type="html">
-      <Preview content={file.content} />
+      <Preview 
+        content={file.content} 
+        fileId={fileId} 
+        fileName={file.name} 
+      />
     </PreviewContainer>
   )
 } 

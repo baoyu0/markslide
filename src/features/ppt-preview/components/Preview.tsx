@@ -6,17 +6,20 @@ import dynamic from 'next/dynamic';
 import { usePptPreviewStore } from '../store/store';
 import { PPT_THEMES } from '../themes';
 import styles from '../styles/preview.module.css';
+import Toolbar from './Toolbar';
 
 // 动态导入 Reveal.js 以避免服务端渲染问题
 const Reveal = dynamic(() => import('reveal.js'), { ssr: false });
 
 interface PreviewProps {
   content: string;
+  fileId: string;
+  fileName: string;
 }
 
-export default function Preview({ content }: PreviewProps) {
+export default function Preview({ content, fileId, fileName }: PreviewProps) {
   const deckRef = useRef<HTMLDivElement>(null);
-  const { theme, transition } = usePptPreviewStore();
+  const { theme, transition, fontSize } = usePptPreviewStore();
   const themeStyles = PPT_THEMES[theme].styles;
   const [isClient, setIsClient] = useState(false);
 
@@ -30,7 +33,7 @@ export default function Preview({ content }: PreviewProps) {
         embedded: true,
         hash: true,
         transition,
-        backgroundTransition: 'slide',
+        backgroundTransition: 'fade',
         width: '100%',
         height: '100%',
         margin: 0.1,
@@ -42,6 +45,10 @@ export default function Preview({ content }: PreviewProps) {
         touch: true,
         hideInactiveCursor: true,
         hideCursorTime: 3000,
+        slideNumber: true,
+        keyboard: true,
+        overview: true,
+        fragments: true,
       });
 
       deck.initialize();
@@ -53,30 +60,40 @@ export default function Preview({ content }: PreviewProps) {
   }, [isClient, theme, transition, content]);
 
   if (!isClient) {
-    return null; // 或者返回一个加载占位符
+    return null;
   }
 
   return (
-    <Box className={`${styles.container} theme-${theme}`}>
-      <div 
-        ref={deckRef} 
-        className="reveal"
-        style={{
-          backgroundColor: themeStyles.backgroundColor,
-          color: themeStyles.color,
-          fontFamily: themeStyles.fontFamily,
+    <Box>
+      <Toolbar fileId={fileId} fileName={fileName} content={content} />
+      
+      <Box 
+        className={`${styles.container} theme-${theme}`}
+        sx={{
+          fontSize,
+          animation: 'fadeIn 0.3s ease-in-out',
         }}
       >
         <div 
-          className="slides"
-          dangerouslySetInnerHTML={{ 
-            __html: content
-              .split('\n---\n') // 分割幻灯片
-              .map(slide => `<section>${slide}</section>`)
-              .join('\n')
-          }} 
-        />
-      </div>
+          ref={deckRef} 
+          className={styles.reveal}
+          style={{
+            backgroundColor: themeStyles.backgroundColor,
+            color: themeStyles.color,
+            fontFamily: themeStyles.fontFamily,
+          }}
+        >
+          <div 
+            className="slides"
+            dangerouslySetInnerHTML={{ 
+              __html: content
+                .split('\n---\n') // 分割幻灯片
+                .map(slide => `<section>${slide}</section>`)
+                .join('\n')
+            }} 
+          />
+        </div>
+      </Box>
     </Box>
   );
 } 

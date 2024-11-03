@@ -1,7 +1,11 @@
-'use client'
-
-import { Box } from '@chakra-ui/react'
 import { Providers } from './providers'
+import { Inter } from 'next/font/google'
+import { siteMetadata } from './metadata'
+import type { Metadata } from 'next'
+
+const inter = Inter({ subsets: ['latin'] })
+
+export const metadata: Metadata = siteMetadata
 
 export default function RootLayout({
   children,
@@ -10,16 +14,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="zh-CN" suppressHydrationWarning>
-      <head>
-        <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-      </head>
-      <body suppressHydrationWarning>
-        <Providers>
-          <Box as="main" minH="100vh">
-            {children}
-          </Box>
-        </Providers>
+      <body className={inter.className} suppressHydrationWarning>
+        <Providers>{children}</Providers>
       </body>
     </html>
   )

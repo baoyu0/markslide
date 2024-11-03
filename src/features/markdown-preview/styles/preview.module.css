@@ -29,53 +29,160 @@
 }
 
 .container {
-  width: 100%;
-  min-height: 100vh;
   padding: 2rem;
-  background-color: var(--chakra-colors-gray-50);
+  min-height: calc(100vh - 120px);
 }
 
-.tocContainer {
-  position: sticky;
-  top: 2rem;
-  width: 250px;
-  height: calc(100vh - 4rem);
-  overflow-y: auto;
-  padding-right: 1rem;
-}
-
-.contentContainer {
-  flex: 1;
+.preview {
   max-width: 800px;
   margin: 0 auto;
-  padding: 2rem;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-/* 暗色主题 */
-@media (prefers-color-scheme: dark) {
-  .container {
-    background-color: var(--chakra-colors-gray-900);
-  }
-
-  .contentContainer {
-    background: var(--chakra-colors-gray-800);
-  }
+/* 标题样式 */
+.preview h1 {
+  font-size: 2em;
+  margin-bottom: 1em;
+  border-bottom: 2px solid var(--border-color);
+  padding-bottom: 0.3em;
 }
 
-/* 响应式布局 */
-@media screen and (max-width: 768px) {
-  .container {
-    padding: 1rem;
-  }
+.preview h2 {
+  font-size: 1.5em;
+  margin: 1em 0;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.3em;
+}
 
-  .tocContainer {
-    display: none;
-  }
+.preview h3 {
+  font-size: 1.25em;
+  margin: 1em 0;
+}
 
-  .contentContainer {
-    padding: 1rem;
+/* 段落和列表样式 */
+.preview p {
+  margin: 1em 0;
+  line-height: 1.6;
+}
+
+.preview ul,
+.preview ol {
+  margin: 1em 0;
+  padding-left: 2em;
+}
+
+.preview li {
+  margin: 0.5em 0;
+}
+
+/* 代码块样式 */
+.preview code {
+  font-family: 'Fira Code', monospace;
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+  background-color: var(--code-bg);
+  font-size: 0.9em;
+}
+
+.preview pre {
+  padding: 1em;
+  border-radius: 6px;
+  overflow-x: auto;
+  background-color: var(--code-bg);
+  margin: 1em 0;
+}
+
+.preview pre code {
+  padding: 0;
+  background: none;
+}
+
+/* 引用样式 */
+.preview blockquote {
+  margin: 1em 0;
+  padding: 0.5em 1em;
+  border-left: 4px solid var(--quote-border);
+  background-color: var(--quote-bg);
+  color: var(--quote-color);
+}
+
+/* 表格样式 */
+.preview table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1em 0;
+}
+
+.preview th,
+.preview td {
+  padding: 0.5em;
+  border: 1px solid var(--border-color);
+}
+
+.preview th {
+  background-color: var(--th-bg);
+  font-weight: bold;
+}
+
+/* 链接样式 */
+.preview a {
+  color: var(--link-color);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.preview a:hover {
+  text-decoration: underline;
+}
+
+/* 图片样式 */
+.preview img {
+  max-width: 100%;
+  height: auto;
+  margin: 1em 0;
+  border-radius: 4px;
+}
+
+/* 水平线样式 */
+.preview hr {
+  margin: 2em 0;
+  border: none;
+  border-top: 2px solid var(--border-color);
+}
+
+/* 代码高亮主题变量 */
+.preview {
+  --border-color: #e2e8f0;
+  --code-bg: #f6f8fa;
+  --quote-border: #e2e8f0;
+  --quote-bg: #f8f9fa;
+  --quote-color: #718096;
+  --th-bg: #f8f9fa;
+  --link-color: #3182ce;
+}
+
+/* 深色模式 */
+[data-theme="dark"] .preview {
+  --border-color: #2d3748;
+  --code-bg: #2d3748;
+  --quote-border: #4a5568;
+  --quote-bg: #2d3748;
+  --quote-color: #a0aec0;
+  --th-bg: #2d3748;
+  --link-color: #63b3ed;
+}
+
+/* 动画效果 */
+.preview {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 } 

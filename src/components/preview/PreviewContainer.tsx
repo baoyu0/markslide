@@ -3,7 +3,20 @@
 import { Box, Container, HStack, IconButton, useColorMode } from '@chakra-ui/react'
 import { MoonIcon, SunIcon } from '@chakra-ui/icons'
 import type { PreviewMode } from '@/shared/types/file'
-import { useEffect, useState } from 'react'
+import dynamic from 'next/dynamic'
+
+const DynamicToolbar = dynamic(() => {
+  switch (type) {
+    case 'markdown':
+      return import('@/features/markdown-preview/components/Toolbar')
+    case 'html':
+      return import('@/features/html-preview/components/Toolbar')
+    case 'ppt':
+      return import('@/features/ppt-preview/components/Toolbar')
+    default:
+      return Promise.reject(new Error('Invalid preview type'))
+  }
+}, { ssr: false })
 
 interface PreviewContainerProps {
   children: React.ReactNode
@@ -13,15 +26,6 @@ interface PreviewContainerProps {
 
 export default function PreviewContainer({ children, fileId, type }: PreviewContainerProps) {
   const { colorMode, toggleColorMode } = useColorMode()
-  const [isClient, setIsClient] = useState(false)
-
-  useEffect(() => {
-    setIsClient(true)
-  }, [])
-
-  if (!isClient) {
-    return null // 或者返回一个加载占位符
-  }
 
   return (
     <Container maxW="container.xl" py={4}>
@@ -32,6 +36,8 @@ export default function PreviewContainer({ children, fileId, type }: PreviewCont
           onClick={toggleColorMode}
         />
       </HStack>
+
+      <DynamicToolbar />
 
       <Box
         borderWidth={1}

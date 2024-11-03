@@ -29,7 +29,11 @@ export default function PptPreviewPage() {
 
   return (
     <PreviewContainer fileId={fileId} type="ppt">
-      <Preview content={file.content} />
+      <Preview 
+        content={file.content} 
+        fileId={fileId} 
+        fileName={file.name} 
+      />
     </PreviewContainer>
   )
 } 
