@@ -6,6 +6,7 @@ import Reveal from 'reveal.js';
 import 'reveal.js/dist/reveal.css';
 import { usePptPreviewStore } from '../store/store';
 import styles from '../styles/preview.module.css';
+import type { Transition } from '../themes';
 
 interface PreviewProps {
   content: string;
@@ -13,14 +14,15 @@ interface PreviewProps {
 
 export default function Preview({ content }: PreviewProps) {
   const deckRef = useRef<HTMLDivElement>(null);
-  const { theme } = usePptPreviewStore();
+  const { theme, transition } = usePptPreviewStore();
 
   useEffect(() => {
     if (deckRef.current) {
       const deck = new Reveal(deckRef.current, {
         embedded: true,
         hash: true,
-        theme: theme,
+        transition: transition as Transition,
+        backgroundTransition: 'slide'
       });
       deck.initialize();
 
@@ -28,7 +30,7 @@ export default function Preview({ content }: PreviewProps) {
         deck.destroy();
       };
     }
-  }, [theme, content]);
+  }, [theme, transition, content]);
 
   return (
     <Box className={styles.container}>

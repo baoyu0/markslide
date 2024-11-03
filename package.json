@@ -10,8 +10,7 @@
     "lint:fix": "next lint --fix",
     "format": "prettier --write .",
     "type-check": "tsc --noEmit",
-    "clean": "rimraf .next && rimraf node_modules/.cache && rimraf src/**/*.js",
-    "commit": "git-cz"
+    "clean": "rimraf .next && rimraf node_modules/.cache && rimraf src/**/*.js"
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.2.4",

@@ -13,10 +13,9 @@ import {
   MenuList,
   MenuItem,
   Tooltip,
-  Button
 } from '@chakra-ui/react';
 import { useDropzone } from 'react-dropzone';
-import { MoonIcon, SunIcon } from '@chakra-ui/icons';
+import { MoonIcon, SunIcon, EditIcon } from '@chakra-ui/icons';
 import { useColorMode } from '@chakra-ui/react';
 import { useFileStore } from '@/shared/stores/fileStore';
 import { usePreview } from '@/shared/utils/preview';

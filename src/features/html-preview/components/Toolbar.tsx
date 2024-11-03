@@ -1,83 +1,35 @@
 "use client";
 
-import {
-  Box,
-  Flex,
-  Select,
-  IconButton,
-  Tooltip,
-  Slider,
-  SliderTrack,
-  SliderFilledTrack,
-  SliderThumb,
-  Text,
-} from "@chakra-ui/react";
-import { FaExpand, FaCompress } from "react-icons/fa";
-import { useHtmlPreviewStore } from "../store/store";
-import { HTML_THEMES } from "../themes";
-import { useFullscreen } from "@/shared/hooks/useFullscreen";
+import { Box, ButtonGroup, Button, Select } from '@chakra-ui/react'
+import { useHtmlPreviewStore } from '../store/store'
 
 export default function Toolbar() {
-  const { isFullscreen, toggleFullscreen } = useFullscreen();
-  const { theme, layout, zoom, setTheme, setLayout, setZoom } = useHtmlPreviewStore();
+  const { theme, layout, setTheme, setLayout } = useHtmlPreviewStore()
 
   return (
-    <Box 
-      position="fixed" 
-      top={0} 
-      right={0} 
-      p={4} 
-      bg="white" 
-      boxShadow="sm"
-      borderRadius="md"
-      m={2}
-      _dark={{ bg: "gray.800" }}
-    >
-      <Flex direction="column" gap={4}>
+    <Box className="html-toolbar">
+      <ButtonGroup spacing={2} mb={2}>
         <Select
+          size="sm"
           value={theme}
-          onChange={(e) => setTheme(e.target.value)}
-          size="sm"
+          onChange={(e) => setTheme(e.target.value as 'light' | 'dark')}
+          width="auto"
         >
-          {Object.entries(HTML_THEMES).map(([key, value]) => (
-            <option key={key} value={key}>{value.name}</option>
-          ))}
+          <option value="light">浅色主题</option>
+          <option value="dark">深色主题</option>
         </Select>
 
         <Select
-          value={layout}
-          onChange={(e) => setLayout(e.target.value as 'responsive' | 'fixed')}
           size="sm"
+          value={layout}
+          onChange={(e) => setLayout(e.target.value as 'default' | 'wide' | 'full')}
+          width="auto"
         >
-          <option value="responsive">响应式布局</option>
-          <option value="fixed">固定宽度</option>
+          <option value="default">默认布局</option>
+          <option value="wide">宽屏布局</option>
+          <option value="full">全屏布局</option>
         </Select>
-
-        <Box>
-          <Text fontSize="sm">缩放</Text>
-          <Slider
-            value={zoom}
-            min={0.5}
-            max={2}
-            step={0.1}
-            onChange={(v) => setZoom(v)}
-          >
-            <SliderTrack>
-              <SliderFilledTrack />
-            </SliderTrack>
-            <SliderThumb />
-          </Slider>
-        </Box>
-
-        <Tooltip label={isFullscreen ? "退出全屏" : "全屏"}>
-          <IconButton
-            aria-label="切换全屏"
-            icon={isFullscreen ? <FaCompress /> : <FaExpand />}
-            onClick={toggleFullscreen}
-            size="sm"
-          />
-        </Tooltip>
-      </Flex>
+      </ButtonGroup>
     </Box>
-  );
+  )
 } 

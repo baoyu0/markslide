@@ -12,29 +12,25 @@ interface PreviewProps {
 }
 
 export default function Preview({ content }: PreviewProps) {
-  const { theme, codeTheme, fontSize, lineHeight } = useMarkdownPreviewStore()
+  const { theme, codeTheme } = useMarkdownPreviewStore()
   const themeStyles = MARKDOWN_THEMES[theme]
 
   return (
     <Box 
       className="markdown-preview"
-      sx={{
-        ...themeStyles,
-        fontSize,
-        lineHeight,
-      }}
+      sx={themeStyles}
     >
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{
-          code({ node, inline, className, children, ...props }) {
+          code({className, children, ...props}) {
             const match = /language-(\w+)/.exec(className || '')
-            return !inline && match ? (
+            return match ? (
               <SyntaxHighlighter
+                {...props}
                 style={CODE_THEMES[codeTheme]}
                 language={match[1]}
                 PreTag="div"
-                {...props}
               >
                 {String(children).replace(/\n$/, '')}
               </SyntaxHighlighter>

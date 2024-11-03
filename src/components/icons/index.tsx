@@ -3,7 +3,6 @@ import type { IconProps } from '@chakra-ui/react'
 import { 
   FaEye, 
   FaTrash, 
-  FaEdit, 
   FaMarkdown, 
   FaHtml5, 
   FaFilePowerpoint 
@@ -27,8 +26,4 @@ export const HtmlIcon = (props: IconProps) => (
 
 export const PptIcon = (props: IconProps) => (
   <Icon as={FaFilePowerpoint} {...props} />
-)
-
-export const EditIcon = (props: IconProps) => (
-  <Icon as={FaEdit} {...props} />
 ) 
