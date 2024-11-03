@@ -1,0 +1,107 @@
+.markdown-preview-container {
+  min-height: 100vh;
+  background-color: var(--chakra-colors-gray-50);
+  color: var(--chakra-colors-gray-900);
+  position: relative;
+}
+
+.markdown-preview {
+  max-width: 800px;
+  margin: 0 auto;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+}
+
+/* 标题样式 */
+.markdown-preview h1,
+.markdown-preview h2,
+.markdown-preview h3,
+.markdown-preview h4,
+.markdown-preview h5,
+.markdown-preview h6 {
+  margin-top: 24px;
+  margin-bottom: 16px;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.markdown-preview h1 { font-size: 2em; }
+.markdown-preview h2 { font-size: 1.5em; }
+.markdown-preview h3 { font-size: 1.25em; }
+.markdown-preview h4 { font-size: 1em; }
+.markdown-preview h5 { font-size: 0.875em; }
+.markdown-preview h6 { font-size: 0.85em; }
+
+/* 段落和列表样式 */
+.markdown-preview p,
+.markdown-preview ul,
+.markdown-preview ol {
+  margin-bottom: 16px;
+  line-height: 1.6;
+}
+
+/* 代码块样式 */
+.markdown-preview pre {
+  padding: 16px;
+  overflow: auto;
+  border-radius: 6px;
+  margin-bottom: 16px;
+}
+
+.markdown-preview code {
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  font-size: 85%;
+}
+
+/* 链接样式 */
+.markdown-preview a {
+  color: var(--chakra-colors-blue-500);
+  text-decoration: none;
+}
+
+.markdown-preview a:hover {
+  text-decoration: underline;
+}
+
+/* 图片样式 */
+.markdown-preview img {
+  max-width: 100%;
+  height: auto;
+  margin: 16px 0;
+  border-radius: 6px;
+}
+
+/* 表格样式 */
+.markdown-preview table {
+  width: 100%;
+  margin-bottom: 16px;
+  border-collapse: collapse;
+}
+
+.markdown-preview th,
+.markdown-preview td {
+  padding: 6px 13px;
+  border: 1px solid var(--chakra-colors-gray-200);
+}
+
+.markdown-preview tr:nth-child(2n) {
+  background-color: var(--chakra-colors-gray-50);
+}
+
+/* 暗色主题适配 */
+@media (prefers-color-scheme: dark) {
+  .markdown-preview-container {
+    background-color: var(--chakra-colors-gray-800);
+    color: var(--chakra-colors-gray-100);
+  }
+  
+  .markdown-preview tr:nth-child(2n) {
+    background-color: var(--chakra-colors-gray-700);
+  }
+  
+  .markdown-preview th,
+  .markdown-preview td {
+    border-color: var(--chakra-colors-gray-600);
+  }
+} 

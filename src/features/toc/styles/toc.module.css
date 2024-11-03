@@ -1,0 +1,53 @@
+.toc {
+  position: sticky;
+  top: 1rem;
+  max-height: calc(100vh - 2rem);
+  overflow-y: auto;
+  padding: 1rem;
+  background: var(--chakra-colors-white);
+  border-radius: var(--chakra-radii-lg);
+  box-shadow: var(--chakra-shadows-sm);
+  width: 250px;
+}
+
+.tocItem {
+  display: block;
+  padding: 0.25rem 0;
+  color: var(--chakra-colors-gray-700);
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.tocItem:hover {
+  color: var(--chakra-colors-blue-500);
+  background: var(--chakra-colors-gray-50);
+  padding-left: 0.5rem;
+}
+
+.tocItem.active {
+  color: var(--chakra-colors-blue-500);
+  background: var(--chakra-colors-blue-50);
+  font-weight: 500;
+}
+
+[data-theme="dark"] .toc {
+  background: var(--chakra-colors-gray-800);
+}
+
+[data-theme="dark"] .tocItem {
+  color: var(--chakra-colors-gray-300);
+}
+
+[data-theme="dark"] .tocItem:hover,
+[data-theme="dark"] .tocItem.active {
+  color: var(--chakra-colors-blue-300);
+  background: var(--chakra-colors-gray-700);
+}
+
+@media screen and (max-width: 768px) {
+  .toc {
+    display: none;
+  }
+} 

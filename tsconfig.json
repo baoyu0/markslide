@@ -18,9 +18,9 @@
         "name": "next"
       }
     ],
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "marked": ["./node_modules/marked"]
+      "@/*": ["src/*"]
     },
     "typeRoots": ["./node_modules/@types", "./src/types"],
     "types": ["reveal.js"]

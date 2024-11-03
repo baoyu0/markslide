@@ -1,0 +1,28 @@
+/* PPT 预览样式 */
+.reveal {
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
+}
+
+.reveal .slides {
+  text-align: center;
+}
+
+/* 幻灯片过渡动画 */
+.reveal .slides section {
+  transition: transform 0.8s ease, opacity 0.8s ease;
+}
+
+/* 工具栏样式 */
+.ppt-toolbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(10px);
+  color: white;
+  z-index: 1000;
+} 

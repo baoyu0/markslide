@@ -1,0 +1,23 @@
+/* HTML 预览样式 */
+.html-preview {
+  padding: 2rem;
+  max-width: 100%;
+  margin: 0 auto;
+  font-family: 'Microsoft YaHei', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.html-preview.responsive {
+  max-width: none;
+  width: 100%;
+}
+
+.html-preview.fixed {
+  max-width: 1200px;
+}
+
+/* 响应式布局样式 */
+@media (max-width: 768px) {
+  .html-preview {
+    padding: 1rem;
+  }
+} 

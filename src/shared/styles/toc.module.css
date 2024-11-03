@@ -1,0 +1,56 @@
+.toc {
+  position: sticky;
+  top: 1rem;
+  max-height: calc(100vh - 2rem);
+  overflow-y: auto;
+  padding: 1rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  width: 250px;
+}
+
+.tocItem {
+  display: block;
+  padding: 0.25rem 0;
+  color: #4a5568;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.tocItem:hover {
+  color: #2b6cb0;
+  background: #f7fafc;
+}
+
+.tocItem.active {
+  color: #2b6cb0;
+  background: #f7fafc;
+  font-weight: 500;
+}
+
+/* 暗色主题 */
+@media (prefers-color-scheme: dark) {
+  .toc {
+    background: #1a202c;
+  }
+
+  .tocItem {
+    color: #e2e8f0;
+  }
+
+  .tocItem:hover,
+  .tocItem.active {
+    color: #63b3ed;
+    background: #2d3748;
+  }
+}
+
+/* 响应式布局 */
+@media screen and (max-width: 768px) {
+  .toc {
+    display: none;
+  }
+} 
