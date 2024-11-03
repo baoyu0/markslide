@@ -1,35 +1,52 @@
 "use client";
 
-import { Box, ButtonGroup, Button, Select } from '@chakra-ui/react'
+import {
+  Box,
+  ButtonGroup,
+  Button,
+  Select,
+  HStack,
+  useColorMode,
+} from '@chakra-ui/react'
 import { useHtmlPreviewStore } from '../store/store'
+import { HTML_THEMES } from '../themes'
 
 export default function Toolbar() {
-  const { theme, layout, setTheme, setLayout } = useHtmlPreviewStore()
+  const { theme, fontSize, setTheme, setFontSize } = useHtmlPreviewStore()
+  const { colorMode } = useColorMode()
 
   return (
-    <Box className="html-toolbar">
-      <ButtonGroup spacing={2} mb={2}>
-        <Select
-          size="sm"
-          value={theme}
-          onChange={(e) => setTheme(e.target.value as 'light' | 'dark')}
-          width="auto"
-        >
-          <option value="light">浅色主题</option>
-          <option value="dark">深色主题</option>
-        </Select>
+    <Box 
+      p={4} 
+      borderBottom="1px" 
+      borderColor={colorMode === 'light' ? 'gray.200' : 'gray.700'}
+    >
+      <HStack spacing={4}>
+        <ButtonGroup spacing={2}>
+          {Object.entries(HTML_THEMES).map(([key, value]) => (
+            <Button
+              key={key}
+              size="sm"
+              colorScheme={theme === key ? 'blue' : 'gray'}
+              onClick={() => setTheme(key as any)}
+            >
+              {value.name}
+            </Button>
+          ))}
+        </ButtonGroup>
 
         <Select
+          value={fontSize}
+          onChange={(e) => setFontSize(e.target.value)}
           size="sm"
-          value={layout}
-          onChange={(e) => setLayout(e.target.value as 'default' | 'wide' | 'full')}
-          width="auto"
+          w="120px"
         >
-          <option value="default">默认布局</option>
-          <option value="wide">宽屏布局</option>
-          <option value="full">全屏布局</option>
+          <option value="14px">14px</option>
+          <option value="16px">16px</option>
+          <option value="18px">18px</option>
+          <option value="20px">20px</option>
         </Select>
-      </ButtonGroup>
+      </HStack>
     </Box>
   )
 } 

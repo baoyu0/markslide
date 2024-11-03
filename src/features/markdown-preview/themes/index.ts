@@ -1,8 +1,8 @@
-import { ThemeConfig } from '../types'
+import type { ThemeConfig } from '../types'
 
 export const themes: Record<string, ThemeConfig> = {
-  default: {
-    name: '默认主题',
+  light: {
+    name: '浅色主题',
     styles: {
       fontSize: '16px',
       lineHeight: '1.6',
@@ -15,7 +15,7 @@ export const themes: Record<string, ThemeConfig> = {
     }
   },
   dark: {
-    name: '暗色主题',
+    name: '深色主题',
     styles: {
       fontSize: '16px',
       lineHeight: '1.6',
@@ -27,7 +27,19 @@ export const themes: Record<string, ThemeConfig> = {
       blockquoteColor: '#8b949e',
     }
   },
-  // 可以添加更多主题...
+  github: {
+    name: 'GitHub 主题',
+    styles: {
+      fontSize: '16px',
+      lineHeight: '1.5',
+      color: '#24292f',
+      backgroundColor: '#ffffff',
+      codeBackground: '#f6f8fa',
+      linkColor: '#0969da',
+      blockquoteBorderColor: '#d0d7de',
+      blockquoteColor: '#57606a',
+    }
+  }
 }
 
 export type ThemeName = keyof typeof themes

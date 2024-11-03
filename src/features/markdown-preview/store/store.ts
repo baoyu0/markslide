@@ -2,7 +2,7 @@
 
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import type { MarkdownTheme, CodeTheme } from '../themes'
+import type { MarkdownTheme, CodeTheme } from '../types'
 
 interface MarkdownPreviewState {
   theme: MarkdownTheme
@@ -10,7 +10,7 @@ interface MarkdownPreviewState {
   fontSize: string
   lineHeight: string
   setTheme: (theme: MarkdownTheme) => void
-  setCodeTheme: (codeTheme: CodeTheme) => void
+  setCodeTheme: (theme: CodeTheme) => void
   setFontSize: (size: string) => void
   setLineHeight: (height: string) => void
 }
@@ -23,7 +23,7 @@ export const useMarkdownPreviewStore = create<MarkdownPreviewState>()(
       fontSize: '16px',
       lineHeight: '1.6',
       setTheme: (theme) => set({ theme }),
-      setCodeTheme: (codeTheme) => set({ codeTheme }),
+      setCodeTheme: (theme) => set({ codeTheme }),
       setFontSize: (size) => set({ fontSize: size }),
       setLineHeight: (height) => set({ lineHeight: height }),
     }),

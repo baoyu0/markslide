@@ -1,42 +1,70 @@
 .container {
-  width: 100%;
-  min-height: 100vh;
   padding: 2rem;
+  min-height: calc(100vh - 120px);
 }
 
-.default {
+.preview {
   max-width: 800px;
   margin: 0 auto;
 }
 
-.wide {
-  max-width: 1200px;
-  margin: 0 auto;
+.preview h1 {
+  font-size: 2em;
+  margin-bottom: 1em;
 }
 
-.full {
-  max-width: none;
-}
-
-.htmlPreview {
-  padding: 2rem;
-  max-width: 800px;
-  margin: 0 auto;
-  line-height: 1.6;
-}
-
-.content {
-  width: 100%;
-}
-
-.content h1 { font-size: 2em; margin-bottom: 1em; }
-.content h2 { font-size: 1.5em; margin-bottom: 0.8em; }
-.content h3 { font-size: 1.3em; margin-bottom: 0.6em; }
-.content p { margin-bottom: 1em; }
-.content img { max-width: 100%; height: auto; margin: 1em 0; }
-.content pre { background: #f5f5f5; padding: 1em; overflow-x: auto; }
-.content blockquote { 
-  border-left: 4px solid #ddd;
-  padding-left: 1em;
+.preview h2 {
+  font-size: 1.5em;
   margin: 1em 0;
-} 
+}
+
+.preview h3 {
+  font-size: 1.25em;
+  margin: 1em 0;
+}
+
+.preview p {
+  margin: 1em 0;
+}
+
+.preview a {
+  text-decoration: none;
+}
+
+.preview a:hover {
+  text-decoration: underline;
+}
+
+.preview code {
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+}
+
+.preview pre {
+  padding: 1em;
+  border-radius: 6px;
+  overflow-x: auto;
+}
+
+.preview blockquote {
+  padding: 0 1em;
+  border-left: 4px solid;
+  margin: 1em 0;
+}
+
+.preview img {
+  max-width: 100%;
+  height: auto;
+}
+
+.preview table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1em 0;
+}
+
+.preview th,
+.preview td {
+  padding: 0.5em;
+  border: 1px solid;
+}

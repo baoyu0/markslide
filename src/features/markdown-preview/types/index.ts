@@ -14,11 +14,5 @@ export interface ThemeConfig {
   styles: ThemeStyles
 }
 
-export interface PreviewStore {
-  theme: string
-  setTheme: (theme: string) => void
-  fontSize: string
-  setFontSize: (size: string) => void
-  lineHeight: string
-  setLineHeight: (height: string) => void
-} 
+export type MarkdownTheme = 'light' | 'dark' | 'github' | 'custom'
+export type CodeTheme = 'light' | 'dark' | 'github' | 'dracula' 

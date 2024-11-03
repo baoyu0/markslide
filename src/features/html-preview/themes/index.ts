@@ -1,71 +1,46 @@
-interface HTMLTheme {
-  name: string;
-  styles: {
-    light: Record<string, any>;
-    dark: Record<string, any>;
-  };
-}
+import type { HtmlThemeConfig } from '../types'
 
-export const HTML_THEMES = {
-  modern: {
-    name: "现代简约",
+export const HTML_THEMES: Record<string, HtmlThemeConfig> = {
+  light: {
+    name: '浅色主题',
     styles: {
-      light: {
-        backgroundColor: "#ffffff",
-        color: "#2d3748",
-        headingColor: "#1a365d",
-        linkColor: "#3182ce",
-        fontFamily: "'Microsoft YaHei', 'SimSun', sans-serif",
-        fontSize: "16px",
-        lineHeight: "1.6",
-        contentWidth: "800px",
-        contentBackground: "#ffffff",
-        borderRadius: "8px",
-        boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
-      },
-      dark: {
-        backgroundColor: "#1a202c",
-        color: "#e2e8f0",
-        headingColor: "#90cdf4",
-        linkColor: "#63b3ed",
-        fontFamily: "'Microsoft YaHei', 'SimSun', sans-serif",
-        fontSize: "16px",
-        lineHeight: "1.6",
-        contentWidth: "800px",
-        contentBackground: "#2d3748",
-        borderRadius: "8px",
-        boxShadow: "0 1px 3px rgba(0, 0, 0, 0.3)",
-      },
-    },
+      backgroundColor: '#ffffff',
+      color: '#24292e',
+      linkColor: '#0366d6',
+      fontFamily: "'Microsoft YaHei', 'SimSun', sans-serif",
+      fontSize: '16px',
+      lineHeight: '1.6',
+      headingColor: '#1a202c',
+      borderColor: '#e2e8f0',
+      codeBackground: '#f6f8fa',
+    }
   },
-  classic: {
-    name: "经典",
+  dark: {
+    name: '深色主题',
     styles: {
-      light: {
-        backgroundColor: "#f8f9fa",
-        color: "#343a40",
-        linkColor: "#007bff",
-      },
-      dark: {
-        backgroundColor: "#212529",
-        color: "#f8f9fa",
-        linkColor: "#0d6efd",
-      },
-    },
+      backgroundColor: '#1a202c',
+      color: '#e2e8f0',
+      linkColor: '#63b3ed',
+      fontFamily: "'Microsoft YaHei', 'SimSun', sans-serif",
+      fontSize: '16px',
+      lineHeight: '1.6',
+      headingColor: '#90cdf4',
+      borderColor: '#2d3748',
+      codeBackground: '#2d3748',
+    }
   },
   paper: {
-    name: "纸张",
+    name: '纸张主题',
     styles: {
-      light: {
-        backgroundColor: "#fff9f0",
-        color: "#2d3748",
-        linkColor: "#805ad5",
-      },
-      dark: {
-        backgroundColor: "#2d3748",
-        color: "#fff9f0",
-        linkColor: "#d6bcfa",
-      },
-    },
-  },
-} as const; 
+      backgroundColor: '#f8f9fa',
+      color: '#2d3748',
+      linkColor: '#3182ce',
+      fontFamily: "'Noto Serif SC', 'SimSun', serif",
+      fontSize: '16px',
+      lineHeight: '1.8',
+      headingColor: '#1a365d',
+      borderColor: '#e2e8f0',
+      codeBackground: '#edf2f7',
+    }
+  }
+} 

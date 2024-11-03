@@ -2,25 +2,26 @@
 
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import type { HtmlTheme } from '../types'
 
 interface HtmlPreviewState {
-  theme: 'light' | 'dark'
-  layout: 'default' | 'wide' | 'full'
-  zoom: number
-  setTheme: (theme: 'light' | 'dark') => void
-  setLayout: (layout: 'default' | 'wide' | 'full') => void
-  setZoom: (zoom: number) => void
+  theme: HtmlTheme
+  fontSize: string
+  lineHeight: string
+  setTheme: (theme: HtmlTheme) => void
+  setFontSize: (size: string) => void
+  setLineHeight: (height: string) => void
 }
 
 export const useHtmlPreviewStore = create<HtmlPreviewState>()(
   persist(
     (set) => ({
       theme: 'light',
-      layout: 'default',
-      zoom: 1,
+      fontSize: '16px',
+      lineHeight: '1.6',
       setTheme: (theme) => set({ theme }),
-      setLayout: (layout) => set({ layout }),
-      setZoom: (zoom) => set({ zoom }),
+      setFontSize: (size) => set({ fontSize: size }),
+      setLineHeight: (height) => set({ lineHeight: height }),
     }),
     {
       name: 'html-preview-storage',

@@ -3,6 +3,7 @@
 import { Box, Container, HStack, IconButton, useColorMode } from '@chakra-ui/react'
 import { MoonIcon, SunIcon } from '@chakra-ui/icons'
 import type { PreviewMode } from '@/shared/types/file'
+import { useEffect, useState } from 'react'
 
 interface PreviewContainerProps {
   children: React.ReactNode
@@ -12,6 +13,15 @@ interface PreviewContainerProps {
 
 export default function PreviewContainer({ children, fileId, type }: PreviewContainerProps) {
   const { colorMode, toggleColorMode } = useColorMode()
+  const [isClient, setIsClient] = useState(false)
+
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
+
+  if (!isClient) {
+    return null // 或者返回一个加载占位符
+  }
 
   return (
     <Container maxW="container.xl" py={4}>
