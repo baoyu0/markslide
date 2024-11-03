@@ -1,11 +1,14 @@
+import { Metadata } from 'next'
 import { Providers } from './providers'
-import { Inter } from 'next/font/google'
-import { siteMetadata } from './metadata'
-import type { Metadata } from 'next'
+import { inter, firaCode } from './fonts'
 
-const inter = Inter({ subsets: ['latin'] })
-
-export const metadata: Metadata = siteMetadata
+export const metadata: Metadata = {
+  title: 'Markslide',
+  description: '一个文档转换和预览工具',
+  icons: {
+    icon: '/icons/icon-192x192.png',
+  },
+}
 
 export default function RootLayout({
   children,
@@ -13,8 +16,12 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="zh-CN" suppressHydrationWarning>
-      <body className={inter.className} suppressHydrationWarning>
+    <html 
+      lang="zh-CN" 
+      className={`${inter.variable} ${firaCode.variable}`}
+      suppressHydrationWarning
+    >
+      <body suppressHydrationWarning>
         <Providers>{children}</Providers>
       </body>
     </html>

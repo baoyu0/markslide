@@ -3,25 +3,26 @@ import remarkParse from 'remark-parse'
 import remarkGfm from 'remark-gfm'
 import remarkMath from 'remark-math'
 import remarkFrontmatter from 'remark-frontmatter'
+import { marked } from 'marked'
 import { Node } from 'unist'
+import { removeYamlFrontMatter } from '@/shared/utils/converter'
 
 interface SlideContent {
   content: string
   notes?: string
+  title?: string
 }
 
 export function processContent(markdown: string): SlideContent[] {
-  // 移除 YAML 头部
+  const processedContent = removeYamlFrontMatter(markdown)
+  
   const processor = unified()
     .use(remarkParse)
     .use(remarkFrontmatter, ['yaml'])
     .use(remarkGfm)
     .use(remarkMath)
   
-  const ast = processor.parse(markdown)
-  // 移除 YAML 节点
-  ast.children = ast.children.filter(node => node.type !== 'yaml')
-  
+  const ast = processor.parse(processedContent)
   return splitIntoSlides(ast)
 }
 
@@ -29,29 +30,30 @@ function splitIntoSlides(ast: Node): SlideContent[] {
   const slides: SlideContent[] = []
   let currentSlide: string[] = []
   let currentNotes: string[] = []
+  let currentTitle: string = ''
   let isInNotes = false
 
   ast.children.forEach((node: any) => {
-    const content = node.value || ''
+    if (node.type === 'heading') {
+      if (currentSlide.length > 0) {
+        slides.push({
+          content: currentSlide.join('\n'),
+          notes: currentNotes.length > 0 ? currentNotes.join('\n') : undefined,
+          title: currentTitle
+        })
+        currentSlide = []
+        currentNotes = []
+      }
+      currentTitle = node.children[0].value
+    }
 
-    // 检查是否是注释标记
+    const content = node.value || ''
+    
     if (content.includes('???')) {
       isInNotes = true
       return
     }
 
-    // 如果是标题或者已经积累了内容，创建新的幻灯片
-    if (node.type === 'heading' && currentSlide.length > 0) {
-      slides.push({
-        content: currentSlide.join('\n'),
-        notes: currentNotes.length > 0 ? currentNotes.join('\n') : undefined
-      })
-      currentSlide = []
-      currentNotes = []
-      isInNotes = false
-    }
-
-    // 根据是否在注释部分，添加内容
     if (isInNotes) {
       currentNotes.push(content)
     } else {
@@ -63,27 +65,38 @@ function splitIntoSlides(ast: Node): SlideContent[] {
   if (currentSlide.length > 0) {
     slides.push({
       content: currentSlide.join('\n'),
-      notes: currentNotes.length > 0 ? currentNotes.join('\n') : undefined
+      notes: currentNotes.length > 0 ? currentNotes.join('\n') : undefined,
+      title: currentTitle
     })
   }
 
   return slides
 }
 
-export function formatSlideContent(slides: SlideContent[]): string {
-  return slides
-    .map(slide => {
-      const formattedContent = slide.content.trim()
-      const formattedNotes = slide.notes 
-        ? `\n<aside class="notes">${slide.notes.trim()}</aside>` 
-        : ''
+export async function formatSlideContent(slides: SlideContent[]): Promise<string> {
+  const formattedSlides = await Promise.all(
+    slides.map(async (slide) => {
+      const content = await marked.parse(slide.content, {
+        async: true,
+        breaks: true,
+        gfm: true
+      })
       
-      return `<section>
-        ${formattedContent}
-        ${formattedNotes}
-      </section>`
+      const notes = slide.notes ? 
+        await marked.parse(slide.notes, { async: true, breaks: true }) : ''
+
+      return `
+        <section data-markdown>
+          <div class="markdown-section">
+            ${content}
+            ${notes ? `<aside class="notes">${notes}</aside>` : ''}
+          </div>
+        </section>
+      `
     })
-    .join('\n')
+  )
+
+  return formattedSlides.join('\n')
 }
 
 export function extractSlideNotes(slides: SlideContent[]): string[] {
