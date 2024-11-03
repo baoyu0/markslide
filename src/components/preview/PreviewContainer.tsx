@@ -1,37 +1,37 @@
 'use client'
 
-import { Box } from '@chakra-ui/react'
-import { ReactNode } from 'react'
-import { useFileStore } from '@/shared/stores/fileStore'
+import { Box, Container, HStack, IconButton, useColorMode } from '@chakra-ui/react'
+import { MoonIcon, SunIcon } from '@chakra-ui/icons'
+import type { PreviewMode } from '@/shared/types/file'
 
 interface PreviewContainerProps {
-  children?: ReactNode
-  fileId?: string
-  type?: 'markdown' | 'html' | 'ppt'
+  children: React.ReactNode
+  fileId: string
+  type: PreviewMode
 }
 
 export default function PreviewContainer({ children, fileId, type }: PreviewContainerProps) {
-  const file = fileId ? useFileStore(state => state.getFile(fileId)) : null
-
-  if (fileId && !file) {
-    return <Box p={4}>文件不存在</Box>
-  }
-
-  if (type && file && file.type !== type) {
-    return <Box p={4}>文件类型不匹配</Box>
-  }
+  const { colorMode, toggleColorMode } = useColorMode()
 
   return (
-    <Box 
-      p={4} 
-      bg="white" 
-      borderRadius="md" 
-      shadow="sm"
-      minH="100vh"
-      display="flex"
-      flexDirection="column"
-    >
-      {children}
-    </Box>
+    <Container maxW="container.xl" py={4}>
+      <HStack justify="flex-end" mb={4}>
+        <IconButton
+          aria-label="Toggle color mode"
+          icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
+          onClick={toggleColorMode}
+        />
+      </HStack>
+
+      <Box
+        borderWidth={1}
+        borderRadius="lg"
+        overflow="hidden"
+        bg={colorMode === 'light' ? 'white' : 'gray.800'}
+        minH="calc(100vh - 120px)"
+      >
+        {children}
+      </Box>
+    </Container>
   )
 } 

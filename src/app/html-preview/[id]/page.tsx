@@ -3,8 +3,8 @@
 import { useParams } from 'next/navigation'
 import { Box } from '@chakra-ui/react'
 import { useFileStore } from '@/shared/stores/fileStore'
-import PreviewContainer from '@/components/preview/PreviewContainer'
 import dynamic from 'next/dynamic'
+import PreviewContainer from '@/components/preview/PreviewContainer'
 
 const Preview = dynamic(
   () => import('@/features/html-preview/components/Preview'),

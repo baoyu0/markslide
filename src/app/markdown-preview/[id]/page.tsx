@@ -17,11 +17,7 @@ export default function MarkdownPreviewPage() {
   const file = useFileStore((state) => state.getFile(fileId))
 
   if (!file) {
-    return (
-      <Box p={4}>
-        文件不存在
-      </Box>
-    )
+    return <Box p={4}>文件不存在</Box>
   }
 
   return (

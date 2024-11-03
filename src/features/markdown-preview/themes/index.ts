@@ -1,32 +1,33 @@
-import type { CSSProperties } from 'react'
-import type { CodeTheme } from './code'
-import { CODE_THEMES } from './code'
+import { ThemeConfig } from '../types'
 
-interface ThemeStyles extends CSSProperties {
-  backgroundColor: string
-  color: string
-  linkColor: string
-  codeBackground: string
-  fontFamily: string
-}
-
-export const MARKDOWN_THEMES: Record<string, ThemeStyles> = {
-  light: {
-    backgroundColor: '#ffffff',
-    color: '#24292e',
-    linkColor: '#0366d6',
-    codeBackground: '#f6f8fa',
-    fontFamily: "'Microsoft YaHei', SimSun, sans-serif",
+export const themes: Record<string, ThemeConfig> = {
+  default: {
+    name: '默认主题',
+    styles: {
+      fontSize: '16px',
+      lineHeight: '1.6',
+      color: '#24292e',
+      backgroundColor: '#ffffff',
+      codeBackground: '#f6f8fa',
+      linkColor: '#0366d6',
+      blockquoteBorderColor: '#dfe2e5',
+      blockquoteColor: '#6a737d',
+    }
   },
   dark: {
-    backgroundColor: '#0d1117',
-    color: '#c9d1d9',
-    linkColor: '#58a6ff',
-    codeBackground: '#161b22',
-    fontFamily: "'Microsoft YaHei', SimSun, sans-serif",
+    name: '暗色主题',
+    styles: {
+      fontSize: '16px',
+      lineHeight: '1.6',
+      color: '#c9d1d9',
+      backgroundColor: '#0d1117',
+      codeBackground: '#161b22',
+      linkColor: '#58a6ff',
+      blockquoteBorderColor: '#30363d',
+      blockquoteColor: '#8b949e',
+    }
   },
+  // 可以添加更多主题...
 }
 
-export { CODE_THEMES }
-export type { CodeTheme }
-export type MarkdownTheme = keyof typeof MARKDOWN_THEMES
+export type ThemeName = keyof typeof themes

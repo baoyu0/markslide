@@ -1,21 +1,20 @@
 import { useRouter } from 'next/navigation'
+import type { PreviewMode } from '../types/file'
 
-export const usePreview = () => {
+export function usePreview() {
   const router = useRouter()
 
-  const openPreview = (type: string, id: string) => {
-    switch (type) {
+  const openPreview = (mode: PreviewMode, fileId: string) => {
+    switch (mode) {
       case 'markdown':
-        router.push(`/markdown-preview/${id}`)
+        router.push(`/markdown-preview/${fileId}`)
         break
       case 'html':
-        router.push(`/html-preview/${id}`)
+        router.push(`/html-preview/${fileId}`)
         break
       case 'ppt':
-        router.push(`/ppt-preview/${id}`)
+        router.push(`/ppt-preview/${fileId}`)
         break
-      default:
-        console.error('Unsupported preview type:', type)
     }
   }
 
