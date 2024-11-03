@@ -8,6 +8,7 @@ import styles from '../styles/preview.module.css';
 import Toolbar from './Toolbar';
 import SpeakerNotes from './SpeakerNotes';
 import SlideOverview from './SlideOverview';
+import { processContent, formatSlideContent, extractSlideNotes } from '../utils/content'
 
 // 动态导入 Reveal.js
 let Reveal: any = null;
@@ -129,12 +130,11 @@ export default function Preview({ content, fileId, fileName }: PreviewProps) {
     }
   }, [deck, theme, transition]);
 
-  const memoizedSlides = useMemo(() => {
-    return content
-      .split('\n---\n')
-      .map(slide => `<section>${slide}</section>`)
-      .join('\n')
-  }, [content]);
+  const memoizedContent = useMemo(() => {
+    const processedSlides = processContent(content)
+    setNotes(extractSlideNotes(processedSlides))
+    return formatSlideContent(processedSlides)
+  }, [content])
 
   const handleSlideChange = useCallback((event: any) => {
     setCurrentSlide(event.indexh);
@@ -213,7 +213,7 @@ export default function Preview({ content, fileId, fileName }: PreviewProps) {
           <div 
             className="slides"
             dangerouslySetInnerHTML={{ 
-              __html: memoizedSlides
+              __html: memoizedContent
             }} 
           />
         </div>
